@@ -1,7 +1,7 @@
 ﻿using System;
 using FortRise;
 using MonoMod.ModInterop;
-using TFModFortRiseLoaderAI;
+using TFModFortRiseAIModule;
 
 namespace TFModFortRiseAiPython
 {
@@ -28,6 +28,9 @@ namespace TFModFortRiseAiPython
       MyTFGame.Load();
       MySession.Load();
       MyLevel.Load();
+      MyPlayerIndicator.Load();
+      MyVersusRoundResults.Load();
+      
       typeof(LoaderAIImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
       typeof(PlayTagImport).ModInterop();
@@ -38,12 +41,8 @@ namespace TFModFortRiseAiPython
       MyTFGame.Unload();
       MySession.Unload();
       MyLevel.Unload();
+      MyPlayerIndicator.Unload();
+      MyVersusRoundResults.Unload();
     }
-  }
-
-  [ModImportName("com.fortrise.TFModFortRiseLoaderAI")]
-  public static class LoaderAIImport
-  {
-    public static Func<String, Agent[], bool> addAgent;
   }
 }

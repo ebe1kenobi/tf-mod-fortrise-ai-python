@@ -55,16 +55,16 @@ class Connection:
     '''
     Writes a new message following the game's protocol.
     '''
-    logging.info('connection.write')
+    #logging.info('connection.write')
     size = len(msg)
     if self.verbose > 0:
       logging.info('Writing: %sB %s', size, self._cap(msg))
 
-    logging.info('self._socket.sendall(size.to_bytes(2, byteorder=_BYTE_ORDER))')
+    #logging.info('self._socket.sendall(size.to_bytes(2, byteorder=_BYTE_ORDER))')
     self._socket.sendall(size.to_bytes(2, byteorder=_BYTE_ORDER))
-    logging.info('self._socket.sendall(msg.encode(_ENCODING))')
+    #logging.info('self._socket.sendall(msg.encode(_ENCODING))')
     self._socket.sendall(msg.encode(_ENCODING))
-    logging.info('connection.write ok')
+    #logging.info('connection.write ok')
     if self.record_path:
       with open(self.record_path, 'a') as file:
         file.write(msg + '\n')
@@ -74,7 +74,7 @@ class Connection:
     '''
     Reads a message following the game's protocol.
     '''
-    logging.info('connection.read')
+    #logging.info('connection.read')
     try:
       self._socket.settimeout(None)
       header: bytes = self._socket.recv(2)
@@ -105,8 +105,8 @@ class Connection:
     '''
     Convert the object to json and writes it.
     '''
-    logging.info('connection.send_json')
-    logging.info(str(obj))
+    #logging.info('connection.send_json')
+    #logging.info(str(obj))
     self.write(json.dumps(obj))
 
   def _cap(self, value: str) -> str:

@@ -4,8 +4,10 @@ using MonoMod.Utils;
 
 namespace TFModFortRiseAiPython
 {
-  public static class ExtEnemy {
-    public static bool IsDead(this Enemy e) {
+  public static class ExtEnemy
+  {
+    public static bool IsDead(this Enemy e)
+    {
       var dynData = DynamicData.For(e);
       bool value = false;
       dynData.TryGet<bool>("dead", out value);

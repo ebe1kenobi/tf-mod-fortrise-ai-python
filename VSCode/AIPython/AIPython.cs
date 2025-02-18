@@ -4,18 +4,31 @@ using TowerFall;
 using Newtonsoft.Json;
 using System;
 using System.Reflection;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
+using TFModFortRiseLoaderAI;
 
 namespace TFModFortRiseAiPython
 {
   internal class AIPython
   {
+    public static readonly Random Random = new Random((int)DateTime.UtcNow.Ticks);
+    public static TcpListener server;
+    public static int nbRemoteAgentConnected = 0;
+    public static int nbRemoteAgentWaited = 0;
+    //public static bool isAgentReady = false;
     public static bool isAgentReady = false;
     public static AIPythonAgent[] agents = new AIPythonAgent[8];
     public static PlayerInput[] AgentInputs = new PlayerInput[8];
     static string scenarioMessage;
-    static bool scenarioSent = false;
-    static bool levelLoaded = false;
-    static List<int> listPlayerAIIndexPlaying = new List<int>();
+    //static bool scenarioSent = false;
+    //static bool levelLoaded = false;
+    //static List<int> listPlayerAIIndexPlaying = new List<int>();
     static StateUpdate stateUpdate = new StateUpdate();
     static int frame = 0;
     public static String serializedStateUpdate = "";
@@ -244,26 +257,9 @@ namespace TFModFortRiseAiPython
       //worm
 
     };
-    //public static void CreateAgent()
-    //{
-    //  if (isAgentReady) return;
-    //  //detect first player slot free
-    //  for (int i = 0; i < TFGame.Players.Length; i++)
-    //  {
-    //    // create an agent for each player
-    //    AgentInputs[i] = new TFModFortRiseLoaderAI.Input(i);
-    //    agents[i] = new AIPythonAgent(i, "AIPYTHON", AgentInputs[i]);
-    //    Logger.Info("Agent " + i + " Created");
-    //    if (null != TFGame.PlayerInputs[i]) continue;
-    //  }
 
-    //  isAgentReady = true;
-    //  Loa
-    //
     public static void NotifyLevelLoad(Level level)
     {
-      Logger.Info("NotifyLevelLoad");
-      //scenarioSent = false;
       StateScenario stateScenario = new StateScenario();
 
       int xSize = level.Tiles.Grid.CellsX;
@@ -283,10 +279,18 @@ namespace TFModFortRiseAiPython
       scenarioMessage = JsonConvert.SerializeObject(stateScenario);
 
       //todo detect player type and player select player[x] == true
-      for (var i = 2; i < 4; i++)
+      for (int i = 0; i < TFGame.Players.Length; i++) //todo use everywhere
       {
-          agents[i].sendScenario(level, scenarioMessage);
+        //Logger.Info("player i = " + i + " playing ?");
+        if (!TFGame.Players[i]) continue;
+        if ("AIP" != LoaderAIImport.GetPlayerTypePlaying(i)) continue;
+        //Logger.Info("player i = " + i + " playing ? YES");
+        agents[i].SendScenario(level, scenarioMessage);
       }
+      //for (var i = 2; i < 4; i++) //todo
+      //{
+      //    agents[i].SendScenario(level, scenarioMessage);
+      //}
     }
 
     public static void update(Level level) {
@@ -479,6 +483,178 @@ namespace TFModFortRiseAiPython
         {
           stateUpdate.entities.Add(state);
         }
+      }
+    }
+
+    public static void WriteConfigFile()
+    {
+      //Logger.Info("RegisterInPool");
+      string poolPath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\TowerFall\\pools\\default\\"; //todo
+      string metadataPathFileName = poolPath + Process.GetCurrentProcess().Id.ToString();
+
+      Util.CreateDirectory(poolPath);
+
+      //Logger.Info("Util.CreateDirectory");
+
+      using (var f = File.Open(metadataPathFileName, FileMode.OpenOrCreate))
+      {
+        using (var w = new StreamWriter(f))
+        {
+          Logger.Info($"Writing metadata to {metadataPathFileName}");
+          w.Write(JsonConvert.SerializeObject(new Metadata
+          {
+            port = ((IPEndPoint)server.LocalEndpoint).Port,
+            fastrun = false,
+            nographics = false,
+          }));
+        }
+      }
+    }
+
+    public static void StartServer()
+    {
+      server = new TcpListener(IPAddress.Any, 0);
+      server.Start();
+      while (((IPEndPoint)server.LocalEndpoint).Port == 0) Thread.Sleep(200);
+      WriteConfigFile();
+      Logger.Info("Server started, waiting for connections...");
+      TcpClient client;
+      while (true)
+      {
+        try
+        {
+          client = server.AcceptTcpClient(); // Blocking call, waits for a client
+          //Logger.Info("Client connected!");
+          // Handle client in a separate thread
+          Task.Run(() => HandleConnectionClient(client));
+        }
+        catch (Exception ex)
+        {
+          Logger.Info($"Error: {ex.Message}");
+          break;
+        }
+      }
+      //Logger.Info("server.Stop()");
+      server.Stop();
+    }
+
+    private static void HandleConnectionClient(TcpClient client)
+    {
+      try
+      {
+        NetworkStream stream = client.GetStream();
+        Message message = Read(stream);
+
+        if (message.type == "join")
+        {
+          Logger.Info($"Received: {message.type}");
+          HandleJoinMessage(message, stream);
+          Logger.Info($"HandleJoinMessage");
+        }
+        else if (message.type == "config")
+        {
+          Logger.Info($"Received: {message.type}");
+          HandleConfigConnection(message, stream);
+          Logger.Info($"HandleNewConfigConnection");
+        }
+        //else if (message.type == "reset")
+        //{
+        //  Logger.Info($"Received: {message.type}");
+        //  //HandleResetMessage(connection, message);
+        //}
+        else
+        {
+          Logger.Info("Message type not supported: {0}".Format(message.type));
+        }
+      }
+      catch (Exception ex)
+      {
+        Logger.Info($"Client error: {ex.Message}");
+      }
+    }
+
+    public static void HandleJoinMessage(Message message, NetworkStream stream)
+    {
+      //Logger.Info($"in HandleJoinMessage");
+      if (isAgentReady) {
+        Logger.Info("Warning, All agent Waited ("+ nbRemoteAgentWaited + ") are already connected");
+        return;
+      }
+      AgentInputs[nbRemoteAgentConnected] = new Input(nbRemoteAgentConnected);
+      agents[nbRemoteAgentConnected] = new AIPythonAgent(nbRemoteAgentConnected, "AIP", AgentInputs[nbRemoteAgentConnected], stream);
+      nbRemoteAgentConnected++;
+      if (nbRemoteAgentConnected == nbRemoteAgentWaited)
+      {
+        isAgentReady = true;
+        LoaderAIImport.addAgent("AIP", AIPython.agents);
+      }
+
+      Write(JsonConvert.SerializeObject(new Message
+      {
+        type = Message.Type.Result,
+        success = true,
+        message = "Game will start once all agents join."
+      }), stream);
+    }
+
+    public static void HandleConfigConnection(Message message, NetworkStream stream)
+    {
+      //Logger.Info("HandleConfigConnection " + message.config.agents.Count);
+      nbRemoteAgentWaited = message.config.agents.Count > 8 ? 8 : message.config.agents.Count;
+      Write(JsonConvert.SerializeObject(new Message
+      {
+        type = Message.Type.Result,
+        maxAgent = nbRemoteAgentWaited,
+        success = true,
+      }), stream);
+    }
+
+    public static void Write(string text, NetworkStream stream)
+    {
+      byte[] payload = Encoding.ASCII.GetBytes(text);
+      int size = payload.Length;
+      //if (size > maxMessageSize)
+      //{
+      //  throw new Exception("Message exceeds limit: {0}.".Format(maxMessageSize));
+      //}
+      byte[] header = new Byte[2];
+      header[0] = (byte)(size >> 8);
+      header[1] = (byte)(size & 0x00FF);
+      //socket.Send(header);
+      stream.Write(header, 0, header.Length);
+      //socket.Send(payload);
+      stream.Write(payload, 0, payload.Length);
+    }
+
+    public static Message Read(NetworkStream stream)
+    {
+      try
+      {
+        byte[] header = new byte[2];
+        byte[] buffer = new byte[10000];
+        string rawMessage = "";
+        while (true)
+        {
+          int bytesRead = stream.Read(header, 0, header.Length);
+          if (bytesRead == 0) break; // Connection closed
+
+          int bytesToReceive = header[0] << 8 | header[1];
+
+          bytesRead = stream.Read(buffer, 0, bytesToReceive);
+          if (bytesRead == 0) break; // Connection closed
+
+          rawMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+          //Logger.Info($"Received: {rawMessage}");
+          break;
+        }
+
+        Message message = JsonConvert.DeserializeObject<Message>(rawMessage);
+        return message;
+      }
+      catch (Exception ex)
+      {
+        Logger.Info($"Client error: {ex.Message}");
+        throw ex;
       }
     }
   }

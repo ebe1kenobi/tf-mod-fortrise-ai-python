@@ -221,7 +221,7 @@ class Towerfall:
     self.open_connection.close()
 
   def _attain_game_port(self) -> int:
-    logging.info("TowerFall._attain_game_port")
+    #logging.info("TowerFall._attain_game_port")
     metadata = self._find_compatible_metadata()
 
     if not metadata:
@@ -241,7 +241,7 @@ class Towerfall:
     return metadata['port']
 
   def _find_compatible_metadata(self) -> Optional[Mapping[str, Any]]:
-    logging.info("TowerFall._find_compatible_metadata")
+    #logging.info("TowerFall._find_compatible_metadata")
     if not os.path.exists(self.pool_path):
       return None
     dirs = list(os.listdir(self.pool_path))

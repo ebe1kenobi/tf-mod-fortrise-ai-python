@@ -35,8 +35,8 @@ namespace TFModFortRiseAiPython
         x = aim.X,
         y = -aim.Y
       };
-      aiState.team = "neutral"; //todo
-      //aiState.team = AgentConfigExtension.GetTeam(ent.TeamColor); //todo
+      //aiState.team = "neutral"; //todo
+      aiState.team = AgentConfigExtension.GetTeam(ent.TeamColor); 
       if (PlayTagImport.IsPlayerPlayTag != null)
       {
         aiState.playTagOn = PlayTagImport.IsPlayTagCountDownOn(ent.PlayerIndex);
