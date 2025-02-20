@@ -12,5 +12,6 @@ namespace TFModFortRiseAiPython
     public static Func<int, String> GetPlayerTypePlaying;
     public static Func<int, String> GetPlayerName;
     public static Func<int, TowerFall.Level,  bool> IsAgentPlaying;
+    public static Func<bool> CanAddAgent;
   }
 }

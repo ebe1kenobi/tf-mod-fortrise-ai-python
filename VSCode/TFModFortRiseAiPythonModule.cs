@@ -9,6 +9,8 @@ namespace TFModFortRiseAiPython
   public class TFModFortRiseAiPythonModule : FortModule
   {
     public static TFModFortRiseAiPythonModule Instance;
+    public static bool EightPlayerMod;
+    public static bool PlayTagMod;
 
     public override Type SettingsType => typeof(TFModFortRiseAiPythonSettings);
     public static TFModFortRiseAiPythonSettings Settings => (TFModFortRiseAiPythonSettings)Instance.InternalSettings;
@@ -29,11 +31,13 @@ namespace TFModFortRiseAiPython
       MySession.Load();
       MyLevel.Load();
       MyPlayerIndicator.Load();
-      MyVersusRoundResults.Load();
       
       typeof(LoaderAIImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
       typeof(PlayTagImport).ModInterop();
+
+      EightPlayerMod = IsModExists("WiderSetMod");
+      PlayTagMod = IsModExists("PlayTag");
     }
 
     public override void Unload()
@@ -42,7 +46,6 @@ namespace TFModFortRiseAiPython
       MySession.Unload();
       MyLevel.Unload();
       MyPlayerIndicator.Unload();
-      MyVersusRoundResults.Unload();
     }
   }
 }

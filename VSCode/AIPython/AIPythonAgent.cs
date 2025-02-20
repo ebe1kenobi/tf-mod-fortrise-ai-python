@@ -28,34 +28,20 @@ namespace TFModFortRiseAiPython
 
     protected override void Move()
     {
-      //Logger.Info("Play to agent {0}.".Format(index));
       if (AIPython.serializedStateUpdate == "") return;
-      //Logger.Info("Sending serializedStateUpdate to agent {0}.".Format(index) + AIPython.serializedStateUpdate);
       AIPython.Write(AIPython.serializedStateUpdate, stream);
-      //Logger.Info("Wait serializedStateUpdate ack to agent {0}.".Format(index));
       Message message = AIPython.Read(stream);
-      //Logger.Info("Receive serializedStateUpdate ack to agent {0}.".Format(index));
       UpdateGameInput(message.actions);
     }
 
     public void SendScenario(Level level, String scenarioMessage)
     {
-      Logger.Info("Send scenario to agent. " + index);
       //int frame = 0;
       string initMessage = JsonConvert.SerializeObject(new StateInit { index = index });
-      //Logger.Info("Sending stateInit to agent {0}.".Format(index));
-      //connection.Send(initMessage, frame);
       AIPython.Write(initMessage, stream);
-      //Logger.Info("Wait stateInit ack to agent {0}.".Format(index));
-
       Message message = AIPython.Read(stream);
-      //Logger.Info("Receive stateInit ack to agent {0}.".Format(index));
-
-      //Logger.Info("Sending Scenario to agent {0}.".Format(index));
       AIPython.Write(scenarioMessage, stream);
-      //Logger.Info("Wait Scenario ack to agent {0}.".Format(index));
       message = AIPython.Read(stream);
-      Logger.Info("Receive Scenario ack to agent {0}.".Format(index));
     }
 
     protected InputState GetCopy(InputState inputState)

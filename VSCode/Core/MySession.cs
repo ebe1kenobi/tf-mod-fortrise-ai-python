@@ -16,7 +16,6 @@
 
     public static void OnLevelLoadFinish_patch(On.TowerFall.Session.orig_OnLevelLoadFinish orig, global::TowerFall.Session self) {
       orig(self);
-      Logger.Info("OnLevelLoadFinish_patch");
       AIPython.NotifyLevelLoad(self.CurrentLevel);
     }
   }

@@ -160,14 +160,16 @@ namespace TFModFortRiseAiPython
       return state;
     }
 
-    //public static StateItem GetStateItem(Entity ent, string itemType) {
-    //  var state = new StateItem {
-    //    type = Types.Item,
-    //    itemType = itemType
-    //  };
-    //  SetAiState(ent, state);
-    //  return state;
-    //}
+    public static StateItem GetStateItem(Entity ent, string itemType)
+    {
+      var state = new StateItem
+      {
+        type = Types.Item,
+        itemType = itemType
+      };
+      SetAiState(ent, state);
+      return state;
+    }
 
     public static StateEntity GetStateArrow(Entity ent)
     {

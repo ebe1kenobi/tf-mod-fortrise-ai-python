@@ -20,10 +20,8 @@ namespace TFModFortRiseAiPython
 
 		public static void Update_patch(On.TowerFall.Level.orig_Update orig, global::TowerFall.Level self) {
       nbUpdate++;
-      //Logger.Info("Update_patch");
       if (!(self.Ending))
       {
-      //Logger.Info("Update_patch 2");
         AIPython.update(self);
 
       }
