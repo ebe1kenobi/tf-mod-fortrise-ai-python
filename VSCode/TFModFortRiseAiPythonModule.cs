@@ -1,7 +1,6 @@
 ﻿using System;
 using FortRise;
 using MonoMod.ModInterop;
-using TFModFortRiseAIModule;
 
 namespace TFModFortRiseAiPython
 {
@@ -30,7 +29,6 @@ namespace TFModFortRiseAiPython
       MyTFGame.Load();
       MySession.Load();
       MyLevel.Load();
-      MyPlayerIndicator.Load();
       
       typeof(LoaderAIImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
@@ -45,7 +43,6 @@ namespace TFModFortRiseAiPython
       MyTFGame.Unload();
       MySession.Unload();
       MyLevel.Unload();
-      MyPlayerIndicator.Unload();
     }
   }
 }
