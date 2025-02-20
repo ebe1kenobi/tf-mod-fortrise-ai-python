@@ -4,6 +4,7 @@ This is a python AI for towerfall (just some if, not a real AI)
 * WiderSetMod supported
 
 A port of the mod of vcanaa : https://github.com/TowerfallAi/  which I add menu integration in https://github.com/ebe1kenobi/tf-mod-ai-python and https://github.com/ebe1kenobi/towerfall-mod-kenobi.
+I remove the training part of the original mod temporarily
 I build the mod loader AI based on this previous work.
 
 See https://github.com/ebe1kenobi/tf-mod-ai-python for developer and how to improve the python program.
