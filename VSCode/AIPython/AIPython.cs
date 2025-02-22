@@ -11,14 +11,23 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using MonoMod.Utils;
 using TFModFortRiseLoaderAI;
+using System.Text.RegularExpressions;
 
 namespace TFModFortRiseAiPython
 {
   internal class AIPython
   {
-    public static readonly Random Random = new Random((int)DateTime.UtcNow.Ticks);
     public const string AINAME = "AIPy";
+    
+    public static readonly Random Random = new Random((int)DateTime.UtcNow.Ticks);
+
+    private static readonly TimeSpan ellapsedGameTime = new TimeSpan(10000000 / 60);
+
+
+    //AIPython.Training
+    public static int maxAgent = 4;
     public static TcpListener server;
     public static int nbRemoteAgentConnected = 0;
     public static int nbRemoteAgentWaited = 0;
@@ -33,6 +42,22 @@ namespace TFModFortRiseAiPython
     static StateUpdate stateUpdate = new StateUpdate();
     static int frame = 0;
     public static String serializedStateUpdate = "";
+
+    public static bool Training = false;
+    public static MatchConfig Config { get; private set; }
+    private static MatchSettings matchSettings;
+    public static bool IsNoConfig { get { return true; } }
+    public static bool IsFastrun { get { return true; } }
+    public static bool NoGraphics { get { return false; } }
+    public static readonly TimeSpan DefaultAgentTimeout = new TimeSpan(0, 0, 10);
+    private static ReconfigOperation reconfigOperation;
+    public static bool Rematch = false;
+
+    public class ReconfigOperation
+    {
+      public MatchConfig Config { get; set; }
+    }
+
     static List<String> listEntityToIgnore = new List<string> 
     {
         //still freeze with :
@@ -261,12 +286,18 @@ namespace TFModFortRiseAiPython
 
     public static void NotifyLevelLoad(Level level)
     {
+      Logger.Info("NotifyLevelLoad");
       StateScenario stateScenario = new StateScenario();
+      Logger.Info("1");
 
       int xSize = level.Tiles.Grid.CellsX;
       int ySize = level.Tiles.Grid.CellsY;
+      Logger.Info("2");
+      Logger.Info("MainMenu.CurrentMatchSettings = " + MainMenu.CurrentMatchSettings);
 
-      stateScenario.mode = MainMenu.CurrentMatchSettings.Mode.ToString();
+      //stateScenario.mode = MainMenu.CurrentMatchSettings.Mode.ToString();
+      stateScenario.mode = Training ? Config.mode : MainMenu.CurrentMatchSettings.Mode.ToString();
+      Logger.Info("3");
       stateScenario.grid = new int[xSize, ySize];
 
       for (int x = 0; x < xSize; x++)
@@ -276,19 +307,21 @@ namespace TFModFortRiseAiPython
           stateScenario.grid[x, ySize - y - 1] = level.Tiles.Grid[x, y] ? 1 : 0;
         }
       }
+      Logger.Info("SerializeObject");
 
       scenarioMessage = JsonConvert.SerializeObject(stateScenario);
+      Logger.Info("SerializeObject2");
 
-      //todo detect player type and player select player[x] == true
-      for (int i = 0; i < TFGame.Players.Length; i++) //todo use everywhere
+      for (int i = 0; i < TFGame.Players.Length; i++) 
       {
+      Logger.Info("i");
         if (!TFGame.Players[i]) continue;
         if (AINAME != LoaderAIImport.GetPlayerTypePlaying(i)) continue;
         agents[i].SendScenario(level, scenarioMessage);
       }
     }
 
-    public static void update(Level level) {
+    public static void Update(Level level) {
       frame++;
       RefreshStateUpdate(level);
       stateUpdate.dt = Engine.TimeMult;
@@ -482,7 +515,7 @@ namespace TFModFortRiseAiPython
 
     public static void WriteConfigFile()
     {
-      string poolPath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\TowerFall\\pools\\default\\"; //todo
+      string poolPath = "pools/";
       string metadataPathFileName = poolPath + Process.GetCurrentProcess().Id.ToString();
 
       Util.CreateDirectory(poolPath);
@@ -586,10 +619,23 @@ namespace TFModFortRiseAiPython
 
     public static void HandleConfigConnection(Message message, NetworkStream stream)
     {
-      int max = TFModFortRiseAiPythonModule.EightPlayerMod ? 8 : 4;
-      nbRemoteAgentWaited = message.config.agents.Count > max ? max : message.config.agents.Count;
-      agents = new AIPythonAgent[max];
-      AgentInputs = new PlayerInput[max];
+      maxAgent = TFModFortRiseAiPythonModule.EightPlayerMod ? 8 : 4;
+      
+      ValidateConfig(message.config);
+
+      nbRemoteAgentWaited = message.config.agents.Count > maxAgent ? maxAgent : message.config.agents.Count;
+      agents = new AIPythonAgent[maxAgent];
+      AgentInputs = new PlayerInput[maxAgent];
+
+      reconfigOperation = new ReconfigOperation() 
+      {
+        Config = message.config
+      };
+      if (message.config.training)
+        AIPython.Training = true; 
+      else
+        AIPython.Training = false;
+
 
       Write(JsonConvert.SerializeObject(new Message
       {
@@ -597,6 +643,62 @@ namespace TFModFortRiseAiPython
         maxAgent = nbRemoteAgentWaited,
         success = true,
       }), stream);
+    }
+
+    public static bool PreUpdate()
+    {
+      //lock (ongoingOperationLock)
+      //{
+        // All changes happen in the main thread to avoid race condition during Updates.
+        //if (ctsSession.IsCancellationRequested)
+        //{
+        //  ctsSession = new CancellationTokenSource();
+        //}
+
+        if (reconfigOperation != null)
+        {
+          // Reconfig without a new config works as a Rematch.
+          if (reconfigOperation.Config != null)
+          {
+            Config = reconfigOperation.Config;
+            //Agents.PrepareAgentConnections(Config.agents);
+            //Agents.AssignRemoteConnections(reconfigOperation.Connections, ctsSession.Token);
+          }
+
+          reconfigOperation = null;
+          if (Training)
+          {
+            StartNewSession();
+          }
+        }
+      else if (Rematch)
+      {
+        if (Training)
+        {
+          StartNewSession();
+        }
+      }
+
+      //if (resetOperation != null)
+      //{
+      //  Agents.Reset(resetOperation.Entities, ctsSession.Token);
+      //  resetOperation = null;
+      //}
+      //}
+
+      //if (!IsMatchRunning())
+      //{
+      //  Sound.StopSound();
+      //  return false;
+      //}
+      //else
+      //{
+      //  Sound.ResumeSound();
+      //}
+
+      //totalFrame++;
+      //totalGameTime += ellapsedGameTime;
+      return true;
     }
 
     public static void Write(string text, NetworkStream stream)
@@ -646,5 +748,398 @@ namespace TFModFortRiseAiPython
         throw ex;
       }
     }
+
+
+    public static void ValidateConfig(MatchConfig config)
+    {
+
+      if (config.mode == null && IsNoConfig)
+      {
+        throw new ConfigException("Game mode need to be specified in config request.");
+      }
+      if (config.mode == null && IsFastrun)
+      {
+        throw new ConfigException("Fastrun can only be enabled when game mode is selected.");
+      }
+
+      switch (config.mode)
+      {
+        case "sandbox":
+          if (config.agents == null || config.agents.Count <= 0)
+          {
+            throw new ConfigException("No agent in config, starting normal game.");
+          }
+          if (config.level < 0)
+          {
+            throw new ConfigException("Invalid level {0}.");
+          }
+          break;
+        case "LastManStanding":
+        case "HeadHunters":
+        case "TeamDeathmatch":
+        case "Quest":
+        case "DarkWorld":
+        case "Trials":
+        case "PlayTag":
+          //TODO
+          //skipWaves
+          //solids
+
+          if (config.agentTimeout == null)
+          {
+            Logger.Info($"Agent timeout not specified. Using default {DefaultAgentTimeout}.");
+            config.agentTimeout = DefaultAgentTimeout;
+          }
+
+          if (config.agents.Count > 8)
+          {
+            throw new ConfigException("Too many agents. Only 8 players are supported.");
+          }
+          if (TFGame.Players.Length > 4 && Training && config.agents.Count > 6 && config.mode == "TeamDeathmatch")
+          {
+            throw new ConfigException("Too many agents. Only 6 players are supported for TeamDeathmatch.");
+          }
+
+          //If not training, the matchsettings will be set in the game interface
+          if (!Training)
+          {
+            break;
+          }
+          if (!config.randomLevel)
+          {
+            if (config.level < 0)
+            {
+              throw new ConfigException("Invalid level {0}.".Format(config.level));
+            }
+
+            if (config.mode == "Trials" && config.subLevel <= 0)
+            {
+              throw new ConfigException("Invalid subLevel {0}.".Format(config.subLevel));
+            }
+          }
+
+          if ((config.mode == "LastManStanding" || config.mode == "HeadHunters"
+            || config.mode == "TeamDeathmatch" || config.mode == "PlayTag") &&
+                config.matchLengths != "Instant" && config.matchLengths != "Quick" &&
+                config.matchLengths != "Standard" && config.matchLengths != "Epic")
+          {
+            throw new ConfigException("matchLengths invalid.");
+          }
+
+          if (config.mode == "DarkWorld" &&
+              (config.difficulty != "Normal" && config.difficulty != "Hardcore" && config.difficulty != "Legendary"))
+          {
+            throw new ConfigException("difficulty invalid.");
+          }
+          if (config.mode == "Quest" && config.agents.Count > 4)
+          {
+            throw new ConfigException("DarkWorld mode is for 1-4 player.");
+          }
+
+          if (config.mode == "Quest" &&
+              (config.difficulty != "Normal" && config.difficulty != "Hardcore"))
+          {
+            throw new ConfigException("difficulty invalid.");
+          }
+          if (config.mode == "Quest" && config.agents.Count > 2)
+          {
+            throw new ConfigException("Quest mode is for 1-2 player.");
+          }
+
+          if (config.mode == "Trial" && config.agents.Count > 1)
+          {
+            throw new ConfigException("Trials mode is for 1 player.");
+          }
+          break;
+        default:
+          throw new ConfigException("Mode value unknown.");
+      }
+    }
+
+    private static void StartNewSession()
+    {
+      Logger.Info("Starting a new session.");
+      Logger.Info("Create match settings.");
+      CreateMatchSettings();
+
+      
+      Session session = new Session(matchSettings);
+      //var dynData = DynamicData.For(session);
+      //dynData.Set("RoundIndex", 1);
+      //dynData.Dispose();
+      session.QuestTestWave = Config.skipWaves;
+      session.StartGame();
+      //session.StartRound();
+      Logger.Info("Session started.");
+      //sessionEnded = false;
+      Rematch = false;
+      //Agents.SessionRestarted();
+    }
+
+
+    private static void CreateMatchSettings()
+    {
+      Logger.Info("CreateMatchSettings.");
+      Logger.Info("Config = " + Config);
+      //if (!IsNoConfig)
+      //{
+      //  Config = JsonConvert.DeserializeObject<MatchConfig>(File.ReadAllText(ConfigPath));
+      //}
+      MatchSettings.MatchLengths matchLength;
+      if (Config.matchLengths == "Instant")
+      {
+        matchLength = MatchSettings.MatchLengths.Instant;
+      }
+      else if (Config.matchLengths == "Quick")
+      {
+        matchLength = MatchSettings.MatchLengths.Quick;
+      }
+      else if (Config.matchLengths == "Epic")
+      {
+        matchLength = MatchSettings.MatchLengths.Epic;
+      }
+      else
+      {
+        matchLength = MatchSettings.MatchLengths.Standard;
+
+      }
+      LevelSystem levelSystem = getLevel(Config);
+
+      if (Config.mode == GameModes.HeadHunters)
+      {
+        Logger.Info("Configuring HeadHunters mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.HeadHunters, matchLength);
+        matchSettings.Variants.TournamentRules();
+      }
+      else if (Config.mode == GameModes.TeamDeathmatch)
+      {
+        Logger.Info("Configuring TeamDeathmatch mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.TeamDeathmatch, matchLength);
+        matchSettings.Variants.TournamentRules();
+      }
+      else if (Config.mode == GameModes.LastManStanding)
+      {
+        Logger.Info("Configuring LastManStanding mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.LastManStanding, matchLength);
+        matchSettings.Variants.TournamentRules();
+      }
+      //else if (TFModFortRiseAIModule.IsModPlaytagExists && Config.mode == GameModes.PlayTag)
+      //{
+      //  Logger.Info("Configuring PlayTag mode.");
+      //  matchSettings = new MatchSettings(levelSystem, Modes.PlayTag, matchLength);
+      //  matchSettings.Variants.TournamentRules();
+      //}
+      else if (Config.mode == GameModes.Quest)
+      {
+        Logger.Info("Configuring Quest mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.Quest, matchLength);
+        if (Config.difficulty == "Hardcore")
+        {
+          matchSettings.QuestHardcoreMode = true;
+        }
+        else
+        {
+          matchSettings.QuestHardcoreMode = false;
+        }
+      }
+      else if (Config.mode == GameModes.DarkWorld)
+      {
+        Logger.Info("Configuring DarkWorld mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.DarkWorld, matchLength);
+
+        if (Config.difficulty == "Legendary")
+        {
+          matchSettings.DarkWorldDifficulty = DarkWorldDifficulties.Legendary;
+        }
+        else if (Config.difficulty == "Hardcore")
+        {
+          matchSettings.DarkWorldDifficulty = DarkWorldDifficulties.Hardcore;
+        }
+        else
+        {
+          matchSettings.DarkWorldDifficulty = DarkWorldDifficulties.Normal;
+        }
+      }
+      else if (Config.mode == GameModes.Trials)
+      {
+        Logger.Info("Configuring Trials mode.");
+        matchSettings = new MatchSettings(levelSystem, Modes.Trials, matchLength);
+      }
+      else if (Config.mode == GameModes.Sandbox)
+      {
+        Logger.Info("Configuring Sandbox mode.");
+        matchSettings = MatchSettings.GetDefaultTrials();
+        matchSettings.Mode = Modes.LevelTest;
+        matchSettings.LevelSystem = new SandboxLevelSystem(GameData.QuestLevels[Config.level], Config.solids);
+      }
+      else
+      {
+        throw new Exception("Game mode not supported: {0}".Format(Config.mode));
+      }
+
+      int indexHuman = 0;
+      int indexRemote = CountHumanConnections(Config.agents);
+      int indexForTeam = 0;
+      for (int i = 0; i < nbRemoteAgentConnected; i++)
+      {
+        var agent = Config.agents[i];
+        // when human in agent config, the distribution is erronous when Teams are involved !
+        // because the human joystick are always at the beginning and the remote at the end
+        // if human, we need to calculate the right index Like in TFGame.PlayerInput
+        if (agent.type == "human")
+        {
+          indexForTeam = indexHuman;
+          indexHuman++;
+        }
+        else
+        {
+          indexForTeam = indexRemote;
+          indexRemote++;
+        }
+
+        Logger.Info("Set players playing " + indexForTeam);
+
+        TFGame.Players[indexForTeam] = true;
+        TFGame.PlayerInputs[indexForTeam] = AIPython.agents[indexForTeam].getInput();
+        TFGame.Characters[indexForTeam] = agent.GetArcherIndex();
+        TFGame.AltSelect[indexForTeam] = agent.GetArcherType();
+
+        matchSettings.Teams[indexForTeam] = agent.GetTeam();
+
+        //hide the intro control for level 0 or trigger controle for tower N
+        var dynData = DynamicData.For(matchSettings.LevelSystem);
+        dynData.Set("ShowControls", false);
+        dynData.Set("ShowTriggerControls", false);
+        dynData.Dispose();
+      }
+    }
+
+    public static int getSubLevel() {
+      return Config.subLevel;
+    }
+
+    public static bool IsMatchRunning()
+    {
+
+      if (IsNoConfig)
+      {
+        if (Config == null) return false;
+        if (Config.agents == null) return false;
+        if (Config.agents.Count == 0) return false;
+        //if (Config.mode == GameModes.Sandbox && !Agents.IsReset) return false;
+        if (Config.mode == GameModes.Sandbox) return false;
+      }
+
+      if (Config != null &&
+          Config.agents != null &&
+          Config.agents.Count > 0
+          //!Agents.Ready) return false;
+          ) return false;
+
+      return true;
+    }
+
+    public static int CountHumanConnections(List<AgentConfig> agentConfigs)
+    {
+      if (agentConfigs == null || agentConfigs.Count == 0) return 0;
+
+      int count = 0;
+      foreach (AgentConfig agentConfig in agentConfigs)
+      {
+        if (agentConfig.type == AgentConfig.Type.Human) count++;
+      }
+      return count;
+    }
+
+    private static LevelSystem getLevel(MatchConfig Config)
+    {
+      if (Config.mode == GameModes.LastManStanding || Config.mode == GameModes.HeadHunters
+          || Config.mode == GameModes.TeamDeathmatch || Config.mode == GameModes.PlayTag)
+      {
+        if (Config.randomLevel)
+        {
+          System.Random rnd = new Random();
+          return GameData.VersusTowers[rnd.Next(1, 17)].GetLevelSystem(); //16 levels
+        }
+        else if (Config.level >= 0)
+        {
+          Logger.Info("Config.level != 0 " + Config.level);
+          return GameData.VersusTowers[Config.level].GetLevelSystem();
+        }
+        else
+        {
+          return GameData.VersusTowers[1].GetLevelSystem();
+        }
+      }
+      else if (Config.mode == GameModes.Quest)
+      {
+        if (Config.randomLevel)
+        {
+          System.Random rnd = new Random();
+          return GameData.QuestLevels[rnd.Next(1, 13)].GetLevelSystem(); //12 levels
+        }
+        else if (Config.level != 0)
+        {
+          return GameData.QuestLevels[Config.level].GetLevelSystem();
+        }
+        else
+        {
+          return GameData.QuestLevels[1].GetLevelSystem();
+        }
+      }
+      else if (Config.mode == GameModes.DarkWorld)
+      {
+        if (Config.randomLevel)
+        {
+          System.Random rnd = new Random();
+          return GameData.DarkWorldTowers[rnd.Next(1, 5)].GetLevelSystem(); // 4 levels
+        }
+        else if (Config.level != 0)
+        {
+          return GameData.DarkWorldTowers[Config.level].GetLevelSystem();
+        }
+        else
+        {
+          return GameData.DarkWorldTowers[1].GetLevelSystem();
+        }
+      }
+      else if (Config.mode == GameModes.Trials)
+      {
+        if (Config.randomLevel)
+        {
+          System.Random rnd = new Random();
+          return GameData.TrialsLevels[rnd.Next(1, 17), rnd.Next(1, 4)].GetLevelSystem(); //16 levels with 3 sublevels
+        }
+        else if (Config.level != 0)
+        {
+          return GameData.TrialsLevels[Config.level, Config.subLevel].GetLevelSystem();
+        }
+        else
+        {
+          return GameData.TrialsLevels[1, 1].GetLevelSystem();
+        }
+      }
+      else //default QuestLevels
+      {
+        return GameData.QuestLevels[0].GetLevelSystem();
+      }
+    }
+
+    public static bool IsHumanPlaying()
+    {
+      if (Config.mode == null) return true;
+      if (NoGraphics) return false;
+
+      foreach (AgentConfig agent in Config.agents)
+      {
+        if (agent.type == AgentConfig.Type.Human)
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
   }
 }

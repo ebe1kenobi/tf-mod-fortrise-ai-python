@@ -24,12 +24,14 @@ namespace TFModFortRiseAiPython
     {
       On.TowerFall.TFGame.Update += Update_patch;
       On.TowerFall.TFGame.Load += Load_patch;
+      On.TowerFall.TFGame.Draw += Draw_patch;
     }
 
     internal static void Unload()
     {
       On.TowerFall.TFGame.Update -= Update_patch;
       On.TowerFall.TFGame.Load -= Load_patch;
+      On.TowerFall.TFGame.Draw -= Draw_patch;
     }
 
     public static void Load_patch(On.TowerFall.TFGame.orig_Load orig)
@@ -40,9 +42,8 @@ namespace TFModFortRiseAiPython
         try
         {
           Task.Run(() => AIPython.StartServer());
-          Logger.Info("Server is running... Press Enter to exit.");
+          Logger.Info("Server is running...");
 
-          //TODO
           while (AIPython.nbRemoteAgentWaited == 0 || AIPython.nbRemoteAgentWaited != AIPython.nbRemoteAgentConnected)
           {
             Thread.Sleep(1000);
@@ -59,13 +60,35 @@ namespace TFModFortRiseAiPython
 
     public static void Update_patch(On.TowerFall.TFGame.orig_Update orig, global::TowerFall.TFGame self, GameTime gameTime)
     {
-      //AIPython.CreateAgent();
       orig(self, gameTime);
       if (LoaderAIImport.CanAddAgent() && AIPython.isAgentReady && !agentAdded)
       {
-        LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents);
+        LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents, AIPython.Training);
         agentAdded = true;
       }
+
+      if (agentAdded == true) {
+        if (AIPython.Training)
+          AIPython.PreUpdate();
+      }
+    }
+
+    public static void Draw_patch(On.TowerFall.TFGame.orig_Draw orig, global::TowerFall.TFGame self, GameTime gameTime)
+    {
+      //if (AIPython.Training && (!AIPython.IsMatchRunning() || AIPython.NoGraphics))
+      //{
+      //  Monocle.Engine.Instance.GraphicsDevice.SetRenderTarget(null);
+      //  return;
+      //}
+
+      orig(self, gameTime);
+
+      //if (AIPython.Training)
+      //{
+      //  Monocle.Draw.SpriteBatch.Begin();
+      //  Agents.Draw();
+      //  Monocle.Draw.SpriteBatch.End();
+      //}
     }
   }
 }

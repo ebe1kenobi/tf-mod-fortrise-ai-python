@@ -5,9 +5,11 @@ def main():
   towerfall = Towerfall(
     verbose = 0,
     config = dict(
-      matchLengths='Quick',
+      matchLengths='Standard', #Instant Quick Standard Epic
       mode='HeadHunters', #Quest, DarkWorld, Trials, LastManStanding, HeadHunters, TeamDeathmatch, PlayTag( not supported = Warlord)
-      level=2,
+      level=0,
+      subLevel=1,
+      training=True,
       # fps=60,
       agentTimeout='24:00:00',
       agents=[

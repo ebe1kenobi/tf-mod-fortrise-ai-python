@@ -8,6 +8,9 @@ namespace TFModFortRiseAiPython
   public class MatchConfig {
 
     [DataMember(EmitDefaultValue = false)]
+    public bool training;
+
+    [DataMember(EmitDefaultValue = false)]
     public int level;
 
     [DataMember(EmitDefaultValue = false)]
@@ -28,7 +31,6 @@ namespace TFModFortRiseAiPython
     [DataMember(EmitDefaultValue = false)]
     public string matchLengths;
 
-
     [DataMember(EmitDefaultValue = false)]
     public bool randomLevel;
 
@@ -43,7 +45,16 @@ namespace TFModFortRiseAiPython
 
     public override String ToString()
     {
-      String s = "{level:" + level + ", mode:" + mode + ", agents:\n";
+      String s = "{training:" + training 
+      + ",fps:" + fps 
+      + ",level:" + level 
+      + ",subLevel:" + subLevel 
+      + ",subLevel:" + randomLevel
+      + ",matchLengths:" + matchLengths
+      + ",difficulty:" + difficulty 
+      + ",matchLengths:" + matchLengths 
+      + ", mode:" + mode 
+      + ", agents:\n";
       foreach (var agent in agents) {
         s += agent.ToString() + "\n";
       }

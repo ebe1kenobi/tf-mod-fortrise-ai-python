@@ -2,6 +2,10 @@
 using FortRise;
 using MonoMod.ModInterop;
 
+//todo on level end -> restart session with same
+//send end message-> win
+//end round -> continue, bloquer actuellemtn car peut pas faire diff avec fin match ?
+
 namespace TFModFortRiseAiPython
 {
   [Fort("com.ebe1.kenobi.TFModFortRiseAiPython", "TFModFortRiseAiPython")]
@@ -29,7 +33,15 @@ namespace TFModFortRiseAiPython
       MyTFGame.Load();
       MySession.Load();
       MyLevel.Load();
-      
+
+      MyPauseMenu.Load();
+      MyVersusRoundResults.Load();
+      MyVersusMatchResults.Load();
+      MyMapScene.Load();
+      GameTips.Load();
+      MyVersusStart.Load();
+      MyVersusLevelSystem.Load();
+
       typeof(LoaderAIImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
       typeof(PlayTagImport).ModInterop();
@@ -43,6 +55,15 @@ namespace TFModFortRiseAiPython
       MyTFGame.Unload();
       MySession.Unload();
       MyLevel.Unload();
+      MyPauseMenu.Unload();
+      MyVersusRoundResults.Unload();
+      MyVersusMatchResults.Unload();
+      MyMapScene.Unload();
+      GameTips.Unload();
+      MyVersusStart.Unload();
+      MyVersusLevelSystem.Unload();
+
     }
+
   }
 }

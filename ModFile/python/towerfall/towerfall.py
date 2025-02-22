@@ -49,8 +49,9 @@ class Towerfall:
     self.config: Mapping[str, Any] = config
     self.towerfall_path = towerfall_path
     self.towerfall_path_exe = os.path.join(self.towerfall_path, 'TowerFall.exe')
-    self.pool_name = 'default'
-    self.pool_path = os.path.join(self.towerfall_path, 'pools', self.pool_name)
+    #self.pool_name = 'default'
+    #self.pool_path = os.path.join(self.towerfall_path, 'pools', self.pool_name)
+    self.pool_path = os.path.join(self.towerfall_path, 'pools')
     logging.info(self.pool_path)
     self.timeout = timeout
     self.verbose = verbose
