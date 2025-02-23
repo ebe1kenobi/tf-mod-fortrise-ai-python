@@ -25,7 +25,6 @@ namespace TFModFortRiseAiPython
 
     public static SlideData GetVersusTip_patch(On.TowerFall.GameTips.orig_GetVersusTip orig)
     {
-      Logger.Info("GetVersusTip_patch *****************");
       //orig(self);
       return null;
     }

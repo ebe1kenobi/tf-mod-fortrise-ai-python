@@ -50,7 +50,7 @@ namespace TFModFortRiseAiPython
     public static bool IsFastrun { get { return true; } }
     public static bool NoGraphics { get { return false; } }
     public static readonly TimeSpan DefaultAgentTimeout = new TimeSpan(0, 0, 10);
-    private static ReconfigOperation reconfigOperation;
+    public static ReconfigOperation reconfigOperation;
     public static bool Rematch = false;
 
     public class ReconfigOperation
@@ -554,6 +554,7 @@ namespace TFModFortRiseAiPython
         catch (Exception ex)
         {
           Logger.Info($"Error: {ex.Message}");
+          //throw ex;
           break;
         }
       }
@@ -579,6 +580,12 @@ namespace TFModFortRiseAiPython
           HandleConfigConnection(message, stream);
           Logger.Info($"HandleNewConfigConnection");
         }
+        else if (message.type == "rematch")
+        {
+          Logger.Info($"Received: {message.type}");
+          HandleRematchMessage(message, stream);
+          Logger.Info($"HandleRematchMessage");
+        }
         //else if (message.type == "reset")
         //{
         //  Logger.Info($"Received: {message.type}");
@@ -592,6 +599,7 @@ namespace TFModFortRiseAiPython
       catch (Exception ex)
       {
         Logger.Info($"Client error: {ex.Message}");
+        //throw ex;
       }
     }
 
@@ -617,13 +625,27 @@ namespace TFModFortRiseAiPython
       }), stream);
     }
 
+    public static void HandleRematchMessage(Message message, NetworkStream stream)
+    {
+      Rematch = true;
+      Write(JsonConvert.SerializeObject(new Message
+      {
+        type = Message.Type.Result,
+        success = true,
+        message = "Rematch will start"
+      }), stream);
+    }
+
     public static void HandleConfigConnection(Message message, NetworkStream stream)
     {
       maxAgent = TFModFortRiseAiPythonModule.EightPlayerMod ? 8 : 4;
       
       ValidateConfig(message.config);
 
-      nbRemoteAgentWaited = message.config.agents.Count > maxAgent ? maxAgent : message.config.agents.Count;
+      //nbRemoteAgentWaited = message.config.agents.Count > maxAgent ? maxAgent : message.config.agents.Count;
+      nbRemoteAgentWaited = message.config.nbAgents > maxAgent ? maxAgent : message.config.nbAgents;
+      //if (message.config.nbAgents > 0) nbRemoteAgentWaited += message.config.nbAgents;
+
       agents = new AIPythonAgent[maxAgent];
       AgentInputs = new PlayerInput[maxAgent];
 
@@ -791,6 +813,11 @@ namespace TFModFortRiseAiPython
             config.agentTimeout = DefaultAgentTimeout;
           }
 
+          
+          if (config.nbAgents <= 0)
+          {
+            throw new ConfigException("nbAgents config parameter is mandatory.");
+          }
           if (config.agents.Count > 8)
           {
             throw new ConfigException("Too many agents. Only 8 players are supported.");
@@ -977,41 +1004,52 @@ namespace TFModFortRiseAiPython
         throw new Exception("Game mode not supported: {0}".Format(Config.mode));
       }
 
-      int indexHuman = 0;
-      int indexRemote = CountHumanConnections(Config.agents);
-      int indexForTeam = 0;
+      //int indexHuman = 0;
+      //int indexRemote = Config.nbHuman;
+      //int indexForTeam = 0;
+
+      
+
       for (int i = 0; i < nbRemoteAgentConnected; i++)
       {
+
         var agent = Config.agents[i];
         // when human in agent config, the distribution is erronous when Teams are involved !
         // because the human joystick are always at the beginning and the remote at the end
         // if human, we need to calculate the right index Like in TFGame.PlayerInput
-        if (agent.type == "human")
-        {
-          indexForTeam = indexHuman;
-          indexHuman++;
-        }
-        else
-        {
-          indexForTeam = indexRemote;
-          indexRemote++;
-        }
+        //if (agent.type == "human")
+        //{
+        //  indexForTeam = indexHuman;
+        //  indexHuman++;
+        //}
+        //else
+        //{
+        //  indexForTeam = indexRemote;
+        //  indexRemote++;
+        //}
 
-        Logger.Info("Set players playing " + indexForTeam);
+        //Logger.Info("Set players playing " + i);
 
-        TFGame.Players[indexForTeam] = true;
-        TFGame.PlayerInputs[indexForTeam] = AIPython.agents[indexForTeam].getInput();
-        TFGame.Characters[indexForTeam] = agent.GetArcherIndex();
-        TFGame.AltSelect[indexForTeam] = agent.GetArcherType();
+        //TFGame.Players[i] = true;
 
-        matchSettings.Teams[indexForTeam] = agent.GetTeam();
+        //if (i >= Config.nbHuman)
+        //{
+        //  Logger.Info("Set players playing input agent " + i);
 
-        //hide the intro control for level 0 or trigger controle for tower N
-        var dynData = DynamicData.For(matchSettings.LevelSystem);
-        dynData.Set("ShowControls", false);
-        dynData.Set("ShowTriggerControls", false);
-        dynData.Dispose();
+        //  TFGame.PlayerInputs[i] = AIPython.agents[i].getInput();
+        //}
+        //TFGame.Characters[i] = agent.GetArcherIndex();
+        //TFGame.AltSelect[i] = agent.GetArcherType();
+
+        matchSettings.Teams[i] = agent.GetTeam();
+        //indexForTeam++;
       }
+
+      //hide the intro control for level 0 or trigger controle for tower N
+      var dynData = DynamicData.For(matchSettings.LevelSystem);
+      dynData.Set("ShowControls", false);
+      dynData.Set("ShowTriggerControls", false);
+      dynData.Dispose();
     }
 
     public static int getSubLevel() {
@@ -1039,17 +1077,17 @@ namespace TFModFortRiseAiPython
       return true;
     }
 
-    public static int CountHumanConnections(List<AgentConfig> agentConfigs)
-    {
-      if (agentConfigs == null || agentConfigs.Count == 0) return 0;
+    //public static int CountHumanConnections(List<AgentConfig> agentConfigs)
+    //{
+    //  if (agentConfigs == null || agentConfigs.Count == 0) return 0;
 
-      int count = 0;
-      foreach (AgentConfig agentConfig in agentConfigs)
-      {
-        if (agentConfig.type == AgentConfig.Type.Human) count++;
-      }
-      return count;
-    }
+    //  int count = 0;
+    //  foreach (AgentConfig agentConfig in agentConfigs)
+    //  {
+    //    if (agentConfig.type == AgentConfig.Type.Human) count++;
+    //  }
+    //  return count;
+    //}
 
     private static LevelSystem getLevel(MatchConfig Config)
     {

@@ -6,6 +6,7 @@ using FortRise;
 using TowerFall;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using TFModFortRiseLoaderAI;
 //using System.Net.Sockets;
 //using System.Net;
 //using System.Text;
@@ -58,12 +59,51 @@ namespace TFModFortRiseAiPython
       });
     }
 
+    private static void SetPlayerControl() {
+      for (var i = TFGame.Players.Length - 1; i >= 0; i--)
+      {
+        //disable keyboard
+        if (TFGame.PlayerInputs[i] == null) continue;
+        //Logger.Info(TFGame.PlayerInputs[i].GetType().ToString());
+
+
+        if (TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.KeyboardInput"
+            && TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.XGamepadInput")
+        {
+          continue;
+        }
+
+        if (i + 1 > AIPython.reconfigOperation.Config.nbHuman)
+        {
+          TFModFortRiseLoaderAIModule.currentPlayerType[i] = "NONE";
+          TFModFortRiseLoaderAIModule.nbPlayerType[i] = 0;
+          TFGame.PlayerInputs[i] = null;
+          continue;
+        }
+      }
+
+      for (int i = 0; i < AIPython.nbRemoteAgentConnected; i++)
+      {
+        var agent = AIPython.reconfigOperation.Config.agents[i];
+
+        TFGame.Players[i] = true;
+        TFGame.Characters[i] = agent.GetArcherIndex();
+        TFGame.AltSelect[i] = agent.GetArcherType();
+      }
+    }
+
     public static void Update_patch(On.TowerFall.TFGame.orig_Update orig, global::TowerFall.TFGame self, GameTime gameTime)
     {
       orig(self, gameTime);
       if (LoaderAIImport.CanAddAgent() && AIPython.isAgentReady && !agentAdded)
       {
-        LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents, AIPython.Training);
+        //keeps only the human controller needed and delete the other for the ia input 
+        if (AIPython.Training)
+        {
+          SetPlayerControl();
+        }
+
+        LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents, false);
         agentAdded = true;
       }
 

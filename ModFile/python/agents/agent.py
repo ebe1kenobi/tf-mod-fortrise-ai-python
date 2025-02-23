@@ -59,11 +59,11 @@ class Agent:
 
     # Add game mode # AiMod.Config.mode == GameModes.Quest
     if game_state['type'] == 'scenario':
-      #logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
       # 'scenario' informs your bot about the current state of the ground. Store this information
       # to use in all subsequent loops. (This example bot doesn't use the shape of the scenario)
       self.state_scenario = game_state
-      # logging.info(str(game_state))
+      logging.info(str(game_state))
 
       # Acknowledge the scenario message.
       # logging.info('send_json : ' + str(dict(type='result', success=True)))
@@ -71,7 +71,8 @@ class Agent:
       return True
 
     if game_state['type'] == 'update':
-      #logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      # logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      # logging.info(str(game_state))
       # 'update' informs the state of entities in the map (players, arrows, enemies, etc).
       self.state_update = game_state
 

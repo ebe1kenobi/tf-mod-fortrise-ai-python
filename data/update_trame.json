@@ -1,0 +1,97 @@
+{'entities': [
+        {'chestType': 'normal', 'pos': {'x': 80.0, 'y': 115.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 10.0, 'y': 10.0
+            }, 'id': 10, 'state': 'closed', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'chest'
+        },
+        {'chestType': 'normal', 'pos': {'x': 240.0, 'y': 115.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 10.0, 'y': 10.0
+            }, 'id': 11, 'state': 'closed', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'chest'
+        },
+        {'chestType': 'normal', 'pos': {'x': 80.0, 'y': 25.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 10.0, 'y': 10.0
+            }, 'id': 8, 'state': 'opened', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'chest'
+        },
+        {'chestType': 'normal', 'pos': {'x': 240.0, 'y': 25.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 10.0, 'y': 10.0
+            }, 'id': 9, 'state': 'opened', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'chest'
+        },
+        {'falling': True, 'pos': {'x': 160.0, 'y': 65.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 6.0, 'y': 10.0
+            }, 'id': 0, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'lantern'
+        },
+        {'pos': {'x': 184.0, 'y': 24.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 8.0, 'y': 8.0
+            }, 'id': 18, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'playerCorpse'
+        },
+        {'pos': {'x': 168.258057, 'y': 61.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 19, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'hat'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 29.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 5, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 29.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 6, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 29.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 7, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 289.0, 'y': 44.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 14, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 34.4854126
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 15, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 29.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 12, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 31.0, 'y': 29.0
+            }, 'vel': {'x': 0.0, 'y': 0.0
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 20, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 220.934921, 'y': 69.73598
+            }, 'vel': {'x': 3.71162415, 'y': -1.228775
+            }, 'size': {'x': 2.0, 'y': 2.0
+            }, 'id': 13, 'state': 'shooting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'
+        },
+        {'playerIndex': 0, 'shield': False, 'wing': True, 'arrows': ['normal'
+            ], 'dead': False, 'onGround': False, 'onWall': False, 'aimDirection': {'x': 1.0, 'y': 0.0
+            }, 'team': 'neutral', 'dodgeCooldown': False, 'playTagOn': False, 'playTag': False, 'pos': {'x': 242.62059, 'y': 57.9453735
+            }, 'vel': {'x': 1.46614075, 'y': 1.36505127
+            }, 'size': {'x': 8.0, 'y': 14.0
+            }, 'id': 1, 'state': 'normal', 'isEnemy': False, 'canHurt': True, 'canBounceOn': False, 'isDead': False, 'facing': 1, 'type': 'archer'
+        },
+        {'playerIndex': 2, 'shield': False, 'wing': False, 'arrows': [], 'dead': False, 'onGround': False, 'onWall': False, 'aimDirection': {'x': 1.0, 'y': 0.0
+            }, 'team': 'neutral', 'dodgeCooldown': False, 'playTagOn': False, 'playTag': False, 'pos': {'x': 188.7004, 'y': 57.08098
+            }, 'vel': {'x': 0.686615, 'y': -2.73681641
+            }, 'size': {'x': 8.0, 'y': 14.0
+            }, 'id': 3, 'state': 'normal', 'isEnemy': False, 'canHurt': True, 'canBounceOn': False, 'isDead': False, 'facing': 1, 'type': 'archer'
+        },
+        {'playerIndex': 3, 'shield': False, 'wing': True, 'arrows': [], 'dead': False, 'onGround': False, 'onWall': False, 'aimDirection': {'x': 1.0, 'y': 0.0
+            }, 'team': 'neutral', 'dodgeCooldown': False, 'playTagOn': False, 'playTag': False, 'pos': {'x': 164.550369, 'y': 155.095718
+            }, 'vel': {'x': 2.46850586, 'y': -0.7116852
+            }, 'size': {'x': 8.0, 'y': 14.0
+            }, 'id': 4, 'state': 'normal', 'isEnemy': False, 'canHurt': True, 'canBounceOn': False, 'isDead': False, 'facing': 1, 'type': 'archer'
+        }
+    ], 'dt': 0.701423943, 'id': 1111, 'type': 'update'
+}

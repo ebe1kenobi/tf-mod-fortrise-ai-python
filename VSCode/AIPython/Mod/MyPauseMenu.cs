@@ -26,15 +26,18 @@ namespace TFModFortRiseAiPython
 
     public static void VersusRematch_patch(On.TowerFall.PauseMenu.orig_VersusRematch orig, global::TowerFall.PauseMenu self)
     {
-      if (AIPython.Training) AIPython.Rematch = true;
+      //TODO endless match
+      //TODO Update_patch + VersusRematch_patch => restart match
+      //if (AIPython.Training) AIPython.Rematch = true;
       orig(self);
     }
 
     public static void Update_patch(On.TowerFall.PauseMenu.orig_Update orig, global::TowerFall.PauseMenu self)
     {
       orig(self);
-      var dynData = DynamicData.For(self);
-      dynData.Invoke("VersusRematch");
+      //TODO endless match
+      //var dynData = DynamicData.For(self);
+      //dynData.Invoke("VersusRematch");
     }
   }
 }

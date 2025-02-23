@@ -20,6 +20,12 @@ namespace TFModFortRiseAiPython
     public int skipWaves;
 
     [DataMember(EmitDefaultValue = false)]
+    public int nbAgents;
+
+    [DataMember(EmitDefaultValue = false)]
+    public int nbHuman; 
+
+    [DataMember(EmitDefaultValue = false)]
     public List<AgentConfig> agents;
 
     [DataMember(EmitDefaultValue = false)]

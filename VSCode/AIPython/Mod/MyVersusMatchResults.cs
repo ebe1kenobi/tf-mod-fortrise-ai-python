@@ -33,8 +33,12 @@ namespace TFModFortRiseAiPython
       //dynData.Set("finished", true);
       orig(self, session, roundResults);
       // on ne voit plus le resultat des match!
-      session.CurrentLevel.Add(new PauseMenu(session.CurrentLevel, new Vector2(160f, 200f), PauseMenu.MenuType.VersusMatchEnd));
-      self.TweenIn();
+
+      //TODO endless match
+      //session.CurrentLevel.Add(new PauseMenu(session.CurrentLevel, new Vector2(160f, 200f), PauseMenu.MenuType.VersusMatchEnd));
+      //self.TweenIn();
+
+
       //((KeyboardInput)TFGame.PlayerInputs[0]).MenuLeft = true;
       //MInput.Keyboard.Pressed(((KeyboardInput)TFGame.PlayerInputs[1]).Config.Jump);
       //PuaseMenu

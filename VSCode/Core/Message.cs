@@ -21,6 +21,8 @@ namespace TFModFortRiseAiPython
       public const string Join = "join";
 
       public const string Result = "result";
+      
+      public const string Rematch = "rematch";
     }
 
     [DataMember(EmitDefaultValue = true)]

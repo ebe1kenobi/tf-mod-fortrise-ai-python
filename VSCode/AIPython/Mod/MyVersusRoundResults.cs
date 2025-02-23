@@ -33,7 +33,8 @@ namespace TFModFortRiseAiPython
       var dynData = DynamicData.For(self);
       var dynData2 = DynamicData.For(dynData.Get<Session>("session"));
       //session.EndlessContinue todo
-      dynData2.Invoke("GotoNextRound");
+      //TODO endless match
+      //dynData2.Invoke("GotoNextRound"); // continue even if match end , round with no player... or overtime
       //SaveData.Instance.Options.ReplayMode = Options.ReplayModes.Off;
 
     }
