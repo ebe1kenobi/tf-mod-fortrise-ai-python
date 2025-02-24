@@ -76,8 +76,8 @@ class Towerfall:
     agents = []
     i = 0
     for agent in self.config['agents']:
-      if agent['type'] == 'human':
-        continue
+      # if agent['type'] == 'human':
+        # continue
       connections.append(self.join(timeout=6000, verbose=self.verbose))
       if 'ai' in agent and agent['ai'] == 'MovementAgent':
         logging.info('MovementAgent')
@@ -179,8 +179,8 @@ class Towerfall:
     nbFiltered = 0;
     agents = []
     for a in config['agents']:
-      if a['type'] == 'remote':
-        nbFiltered += 1
+      # if a['type'] == 'remote':
+      nbFiltered += 1
       agents.append(a)
       if nbFiltered == response['maxAgent']:
         break

@@ -5,13 +5,13 @@ namespace TFModFortRiseAiPython
 {
   [DataContract]
   public class AgentConfig {
-    public static class Type {
-      public static string Human = "human";
-      public static string Remote = "remote";
-    }
+    //public static class Type {
+    //  public static string Human = "human";
+    //  public static string Remote = "remote";
+    //}
 
-    [DataMember(EmitDefaultValue = true)]
-    public string type;
+    //[DataMember(EmitDefaultValue = true)]
+    //public string type;
 
     [DataMember(EmitDefaultValue = false)]
     public string team;
@@ -21,7 +21,8 @@ namespace TFModFortRiseAiPython
 
     public override String ToString()
     {
-      return "{type:" + type + ", team:" + team + ", archer:" + archer + "}";
+      return "{team:" + team + ", archer:" + archer + "}";
+      //return "{type:" + type + ", team:" + team + ", archer:" + archer + "}";
     }
   }
 }

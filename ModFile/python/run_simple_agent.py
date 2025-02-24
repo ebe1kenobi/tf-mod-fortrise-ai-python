@@ -13,13 +13,19 @@ def main():
       # fps=60,
       agentTimeout='24:00:00',
       nbAgents = 4, # 4 or 8 number of agent Towerfall will wait to connect before start game, the number in agents blow + number of agent if another client will connect
-      nbHuman = 0, # number of human playing (used when Training=True only)
+      # nbHuman = 0, # number of human playing (used when Training=True only)
       #always set all the agent
+      trainingPlayer=[
+        dict(type='remote'), # human MUST always be in the beginning of the array!
+        dict(type='none'),
+        dict(type='none'),
+        dict(type='remote'), # IA to train, will connect after
+      ],
       agents=[
-        dict(type='remote', archer='white', ai='SimpleAgentLevel1'),
-        dict(type='remote', archer='orange', ai='SimpleAgentLevel1'),
-        dict(type='remote', archer='purple', ai='SimpleAgentLevel1'),
-        dict(type='remote', archer='orange', ai='SimpleAgentLevel1'),
+        dict(archer='white', ai='SimpleAgentLevel1'),
+        dict(archer='orange', ai='SimpleAgentLevel1'),
+        dict(archer='purple', ai='SimpleAgentLevel1'),
+        dict(archer='orange', ai='SimpleAgentLevel1'),
         #dict(type='remote', archer='orange', ai='SimpleAgentLevel1'),
         #dict(type='remote', archer='orange', ai='SimpleAgentLevel1'),
         #dict(type='remote', archer='orange', ai='SimpleAgentLevel1'),

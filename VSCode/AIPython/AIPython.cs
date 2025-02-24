@@ -23,7 +23,7 @@ namespace TFModFortRiseAiPython
     
     public static readonly Random Random = new Random((int)DateTime.UtcNow.Ticks);
 
-    private static readonly TimeSpan ellapsedGameTime = new TimeSpan(10000000 / 60);
+    //private static readonly TimeSpan ellapsedGameTime = new TimeSpan(10000000 / 60);
 
 
     //AIPython.Training
@@ -286,18 +286,18 @@ namespace TFModFortRiseAiPython
 
     public static void NotifyLevelLoad(Level level)
     {
-      Logger.Info("NotifyLevelLoad");
+      //Logger.Info("NotifyLevelLoad");
       StateScenario stateScenario = new StateScenario();
-      Logger.Info("1");
+      //Logger.Info("1");
 
       int xSize = level.Tiles.Grid.CellsX;
       int ySize = level.Tiles.Grid.CellsY;
-      Logger.Info("2");
-      Logger.Info("MainMenu.CurrentMatchSettings = " + MainMenu.CurrentMatchSettings);
+      //Logger.Info("2");
+      //Logger.Info("MainMenu.CurrentMatchSettings = " + MainMenu.CurrentMatchSettings);
 
       //stateScenario.mode = MainMenu.CurrentMatchSettings.Mode.ToString();
       stateScenario.mode = Training ? Config.mode : MainMenu.CurrentMatchSettings.Mode.ToString();
-      Logger.Info("3");
+      //Logger.Info("3");
       stateScenario.grid = new int[xSize, ySize];
 
       for (int x = 0; x < xSize; x++)
@@ -307,14 +307,14 @@ namespace TFModFortRiseAiPython
           stateScenario.grid[x, ySize - y - 1] = level.Tiles.Grid[x, y] ? 1 : 0;
         }
       }
-      Logger.Info("SerializeObject");
+      //Logger.Info("SerializeObject");
 
       scenarioMessage = JsonConvert.SerializeObject(stateScenario);
-      Logger.Info("SerializeObject2");
+      //Logger.Info("SerializeObject2");
 
       for (int i = 0; i < TFGame.Players.Length; i++) 
       {
-      Logger.Info("i");
+      //Logger.Info("i");
         if (!TFGame.Players[i]) continue;
         if (AINAME != LoaderAIImport.GetPlayerTypePlaying(i)) continue;
         agents[i].SendScenario(level, scenarioMessage);
@@ -611,7 +611,16 @@ namespace TFModFortRiseAiPython
       }
       AgentInputs[nbRemoteAgentConnected] = new Input(nbRemoteAgentConnected);
       agents[nbRemoteAgentConnected] = new AIPythonAgent(nbRemoteAgentConnected, AINAME, AgentInputs[nbRemoteAgentConnected], stream);
+        
+      if (Training) {
+        //the agent will not play for this training game
+        if (reconfigOperation.Config.trainingPlayer[nbRemoteAgentConnected].type == TrainingPlayer.Type.None) {
+          agents[nbRemoteAgentConnected].setPlaying(false);
+        }
+      }
+
       nbRemoteAgentConnected++;
+
       if (nbRemoteAgentConnected == nbRemoteAgentWaited)
       {
         isAgentReady = true;
@@ -1056,26 +1065,26 @@ namespace TFModFortRiseAiPython
       return Config.subLevel;
     }
 
-    public static bool IsMatchRunning()
-    {
+    //public static bool IsMatchRunning()
+    //{
 
-      if (IsNoConfig)
-      {
-        if (Config == null) return false;
-        if (Config.agents == null) return false;
-        if (Config.agents.Count == 0) return false;
-        //if (Config.mode == GameModes.Sandbox && !Agents.IsReset) return false;
-        if (Config.mode == GameModes.Sandbox) return false;
-      }
+    //  if (IsNoConfig)
+    //  {
+    //    if (Config == null) return false;
+    //    if (Config.agents == null) return false;
+    //    if (Config.agents.Count == 0) return false;
+    //    //if (Config.mode == GameModes.Sandbox && !Agents.IsReset) return false;
+    //    if (Config.mode == GameModes.Sandbox) return false;
+    //  }
 
-      if (Config != null &&
-          Config.agents != null &&
-          Config.agents.Count > 0
-          //!Agents.Ready) return false;
-          ) return false;
+    //  if (Config != null &&
+    //      Config.agents != null &&
+    //      Config.agents.Count > 0
+    //      //!Agents.Ready) return false;
+    //      ) return false;
 
-      return true;
-    }
+    //  return true;
+    //}
 
     //public static int CountHumanConnections(List<AgentConfig> agentConfigs)
     //{
@@ -1163,21 +1172,28 @@ namespace TFModFortRiseAiPython
       }
     }
 
-    public static bool IsHumanPlaying()
-    {
-      if (Config.mode == null) return true;
-      if (NoGraphics) return false;
-
-      foreach (AgentConfig agent in Config.agents)
-      {
-        if (agent.type == AgentConfig.Type.Human)
-        {
-          return true;
-        }
+    public static int getNbHumanTraining() {
+      int nb = 0;
+      for (int i = 0; i < reconfigOperation.Config.trainingPlayer.Count; i++) {
+        if (reconfigOperation.Config.trainingPlayer[i].type == TrainingPlayer.Type.Human) nb++;
       }
-
-      return false;
+      return nb;
     }
+    //public static bool IsHumanPlaying()
+    //{
+    //  if (Config.mode == null) return true;
+    //  if (NoGraphics) return false;
+
+    //  foreach (AgentConfig agent in Config.agents)
+    //  {
+    //    if (agent.type == AgentConfig.Type.Human)
+    //    {
+    //      return true;
+    //    }
+    //  }
+
+    //  return false;
+    //}
 
   }
 }

@@ -22,11 +22,14 @@ namespace TFModFortRiseAiPython
     [DataMember(EmitDefaultValue = false)]
     public int nbAgents;
 
-    [DataMember(EmitDefaultValue = false)]
-    public int nbHuman; 
+    //[DataMember(EmitDefaultValue = false)]
+    //public int nbHuman; 
 
     [DataMember(EmitDefaultValue = false)]
     public List<AgentConfig> agents;
+
+    [DataMember(EmitDefaultValue = false)]
+    public List<TrainingPlayer> trainingPlayer;
 
     [DataMember(EmitDefaultValue = false)]
     public string mode;
@@ -59,8 +62,13 @@ namespace TFModFortRiseAiPython
       + ",matchLengths:" + matchLengths
       + ",difficulty:" + difficulty 
       + ",matchLengths:" + matchLengths 
-      + ", mode:" + mode 
-      + ", agents:\n";
+      + ", mode:" + mode
+      + ", trainingPlayer:\n";
+      foreach (var player in trainingPlayer)
+      {
+        s += player.ToString() + "\n";
+      }
+      s += ", agents:\n";
       foreach (var agent in agents) {
         s += agent.ToString() + "\n";
       }

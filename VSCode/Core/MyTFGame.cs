@@ -66,14 +66,13 @@ namespace TFModFortRiseAiPython
         if (TFGame.PlayerInputs[i] == null) continue;
         //Logger.Info(TFGame.PlayerInputs[i].GetType().ToString());
 
-
         if (TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.KeyboardInput"
             && TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.XGamepadInput")
         {
           continue;
         }
 
-        if (i + 1 > AIPython.reconfigOperation.Config.nbHuman)
+        if (i + 1 > AIPython.getNbHumanTraining())
         {
           TFModFortRiseLoaderAIModule.currentPlayerType[i] = "NONE";
           TFModFortRiseLoaderAIModule.nbPlayerType[i] = 0;
@@ -86,7 +85,14 @@ namespace TFModFortRiseAiPython
       {
         var agent = AIPython.reconfigOperation.Config.agents[i];
 
-        TFGame.Players[i] = true;
+        if (AIPython.reconfigOperation.Config.trainingPlayer[i].type == TrainingPlayer.Type.None)
+        {
+          TFGame.Players[i] = false;
+        }
+        else
+        {
+          TFGame.Players[i] = true;
+        }
         TFGame.Characters[i] = agent.GetArcherIndex();
         TFGame.AltSelect[i] = agent.GetArcherType();
       }
