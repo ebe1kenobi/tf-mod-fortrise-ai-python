@@ -8,6 +8,43 @@ namespace TFModFortRiseAiPython
 {
   public static class MyPlayer
   {
+    internal static void Load()
+    {
+      On.TowerFall.Player.Die_DeathCause_int_bool_bool += Die_DeathCause_int_bool_bool_patch;
+      On.TowerFall.Player.StealArrow_Player += StealArrow_Player_patch;
+      On.TowerFall.Player.CatchArrow += CatchArrow_patch;
+    }
+
+    internal static void Unload()
+    {
+      On.TowerFall.Player.Die_DeathCause_int_bool_bool -= Die_DeathCause_int_bool_bool_patch;
+      On.TowerFall.Player.StealArrow_Player -= StealArrow_Player_patch;
+      On.TowerFall.Player.CatchArrow -= CatchArrow_patch;
+    }
+
+    public static PlayerCorpse Die_DeathCause_int_bool_bool_patch(On.TowerFall.Player.orig_Die_DeathCause_int_bool_bool orig, global::TowerFall.Player self, DeathCause deathCause, int killerIndex, bool brambled, bool laser)
+    {
+      //todo training
+      AIPython.agents[self.PlayerIndex].dead = true;
+      AIPython.agents[self.PlayerIndex].deathCause = deathCause;
+      AIPython.agents[self.PlayerIndex].killer = killerIndex;
+      if (AIPython.Training) {
+        Logger.Info("player " + self.PlayerIndex + " dead");
+        AIPython.Update(self.Level);
+        AIPython.agents[self.PlayerIndex].Move(); // send last state because Move() will not be called after this point when match end
+      }
+      return orig(self, deathCause, killerIndex, brambled, laser);
+    }
+
+    public static void StealArrow_Player_patch(On.TowerFall.Player.orig_StealArrow_Player orig, global::TowerFall.Player self, global::TowerFall.Player victim) {
+      AIPython.agents[self.PlayerIndex].stealArrow = true;
+    }
+
+    public static void CatchArrow_patch(On.TowerFall.Player.orig_CatchArrow orig, global::TowerFall.Player self, global::TowerFall.Arrow arrow) {
+      AIPython.agents[self.PlayerIndex].catchArrow = true;
+    }
+
+
     public static StateEntity GetState(this Player ent)
     {
       var aiState = new StateArcher() { type = "archer" };
@@ -24,7 +61,15 @@ namespace TFModFortRiseAiPython
         aiState.arrows.Add(arrows[i].ToString().FirstLower());
       }
       aiState.canHurt = ent.CanHurt;
-      aiState.dead = ent.Dead;
+      //aiState.dead = ent.Dead;
+      aiState.dead = AIPython.agents[ent.PlayerIndex].dead;
+      aiState.killer = AIPython.agents[ent.PlayerIndex].killer;
+
+      aiState.catchArrow = AIPython.agents[ent.PlayerIndex].catchArrow;
+      aiState.stealArrow = AIPython.agents[ent.PlayerIndex].stealArrow;
+      AIPython.agents[ent.PlayerIndex].catchArrow = false;
+      AIPython.agents[ent.PlayerIndex].stealArrow = false;
+
       aiState.facing = (int)ent.Facing;
       aiState.onGround = ent.OnGround;
       var dynData = DynamicData.For(ent);

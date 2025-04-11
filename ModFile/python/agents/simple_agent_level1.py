@@ -15,12 +15,16 @@ _TIMEOUT = 10
 class SimpleAgentLevel1(Agent):
 
   def act(self, game_state: Mapping[str, Any]):
-    #logging.info('SimpleAgentLevel1.act')
-    
+    # logging.info('SimpleAgentLevel1.act')
+
     if super().act(game_state):
-      return True 
+      return True
 
     enemy_state = None
+
+    # self.press('r') # todo trianing
+    # self.send_actions()
+    # return True
 
     # Try to find an enemy archer.
     for state in self.players:
@@ -30,7 +34,7 @@ class SimpleAgentLevel1(Agent):
       if self.is_playtag_on() and not self.is_tag():
         if state['playTag'] == True:
           enemy_state = state
-          break        
+          break
         continue
       if (self.state_scenario['mode'] != "Quest" and self.state_scenario['mode'] != "DarkWorld") \
         and ((state['team'] == 'neutral') or state['team'] != self.my_state['team']):
@@ -51,7 +55,7 @@ class SimpleAgentLevel1(Agent):
 
     my_pos = self.my_state['pos']
     enemy_pos = enemy_state['pos']
-    
+
     # simple management of playtag mode pursue or flee
     if self.is_playtag_on():
       if self.is_tag(): # pursue
@@ -64,7 +68,7 @@ class SimpleAgentLevel1(Agent):
           self.press('l')
         else:
           self.press('r')
-        
+
     elif not self.has_move():
       # logging.info("not has_move")
 
@@ -86,21 +90,21 @@ class SimpleAgentLevel1(Agent):
         elif self.enemy_is("down", self.my_state, enemy_state) \
             and self.can_shoot("down", self.my_state, enemy_state):
           # if random.randint(0, 1) == 0:
-          self.add_move(['s', 'd'], ['d'])            
+          self.add_move(['s', 'd'], ['d'])
           # logging.info("add_move sd d : " + str(self.moves))
 
         # If in the same horizontal line  (+/- player height) shoots,
         elif self.enemy_is("right", self.my_state, enemy_state) \
           and self.can_shoot("right", self.my_state, enemy_state):
           # if random.randint(0, 1) == 0:
-          self.add_move(['s', 'r'], ['r'])            
+          self.add_move(['s', 'r'], ['r'])
           # logging.info("add_move sr r : " + str(self.moves))
           # self.press('s')
 
         elif self.enemy_is("left", self.my_state, enemy_state) \
           and self.can_shoot("left", self.my_state, enemy_state):
           # if random.randint(0, 1) == 0:
-          self.add_move(['s', 'l'], ['l'])            
+          self.add_move(['s', 'l'], ['l'])
           # logging.info("add_move sl l : " + str(self.moves))
           # self.press('s')
 
@@ -134,7 +138,7 @@ class SimpleAgentLevel1(Agent):
       case "up":
         return abs(my_state['pos']['x'] - enemy_state['pos']['x']) < enemy_state['size']['x'] \
                and my_state['pos']['y'] - enemy_state['pos']['y'] < 0
-      
+
       case "down":
         return abs(my_state['pos']['x'] - enemy_state['pos']['x']) < enemy_state['size']['x'] \
                and my_state['pos']['y'] - enemy_state['pos']['y'] > 0
@@ -166,11 +170,11 @@ class SimpleAgentLevel1(Agent):
         # logging.info("my_cell[1] - enemy_cell[1] <= 10 : " + str(my_cell[1]) + " - " + str(enemy_cell[1]))
         return True
     elif direction == "down":
-      return True        
+      return True
     else: # direction == "left" or direction == "right":
       if abs(my_cell[0] - enemy_cell[0] <= 10):
         # ".info("my_cell[0] - enemy_cell[0] <= 10 : " + str(my_cell[0]) + " - " + str(enemy_cell[0]))
-        return True      
+        return True
     return False
 
   def has_wall_between(self, direction, my_state, enemy_state):
@@ -183,7 +187,7 @@ class SimpleAgentLevel1(Agent):
     # logging.info("enemy_state : " + str(enemy_state['pos']))
     # logging.info("my_cell : " + str(my_cell))
     # logging.info("enemy_cell : " + str(enemy_cell))
-    
+
     if direction == "up":
       # logging.info("direction : " + direction)
       # search a wall from X,Y1 to X,Y2 because they are on the same vertical line, sort of...
@@ -193,7 +197,7 @@ class SimpleAgentLevel1(Agent):
         if self.state_scenario['grid'][my_cell[0]][i] == 1:
           # logging.info("wall found in self.state_scenario['grid']"+str(my_cell[0])+"]["+str(i)+"]")
           return True
-      return False  
+      return False
 
     if direction == "down":
       # logging.info("direction : " + direction)
@@ -203,7 +207,7 @@ class SimpleAgentLevel1(Agent):
         if self.state_scenario['grid'][my_cell[0]][i] == 1:
           # logging.info("wall found in self.state_scenario['grid']["+str(my_cell[0])+"]["+str(i)+"]")
           return True
-      return False 
+      return False
 
     if direction == "right":
       # logging.info("direction : " + direction)
@@ -213,7 +217,7 @@ class SimpleAgentLevel1(Agent):
         if self.state_scenario['grid'][i][my_cell[1]] == 1:
           # logging.info("wall found in self.state_scenario['grid']["+str(i)+"]["+str(my_cell[1])+"]")
           return True
-      return False     
+      return False
 
     if direction == "left":
       # logging.info("direction : " + direction)
@@ -223,7 +227,7 @@ class SimpleAgentLevel1(Agent):
         if self.state_scenario['grid'][i][my_cell[1]] == 1:
           # logging.info("wall found in self.state_scenario['grid']["+str(i)+"]["+str(my_cell[1])+"]")
           return True
-      return False                
+      return False
 
 
   def get_cell_from_position(self, position):

@@ -22,6 +22,7 @@ class Agent:
     self.moves = []
     self.my_state = []
     self.players = []
+    self.rematch = False
     # self.attack_achers = attack_archers
 
   def run(self):
@@ -46,7 +47,7 @@ class Agent:
     # There are three main types to handle, 'init', 'scenario' and 'update'.
     # Check 'type' to handle each accordingly.
     if game_state['type'] == 'init':
-      #logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
 
       # 'init' is sent every time a match series starts. It contains information about the players and teams.
       # The seed is based on the bot index so each bots acts differently.
@@ -63,7 +64,7 @@ class Agent:
       # 'scenario' informs your bot about the current state of the ground. Store this information
       # to use in all subsequent loops. (This example bot doesn't use the shape of the scenario)
       self.state_scenario = game_state
-      logging.info(str(game_state))
+      # logging.info(str(game_state))
 
       # Acknowledge the scenario message.
       # logging.info('send_json : ' + str(dict(type='result', success=True)))
@@ -87,7 +88,7 @@ class Agent:
           self.my_state = state
 
     # If the agent is not present, it means it is dead.
-    if self.my_state == None:
+    if self.isDead():
       # You are required to reply with actions, or the agent will get disconnected.
       #logging.info('Agent.send_actions  player dead')
       self.send_actions()
@@ -95,16 +96,25 @@ class Agent:
 
     return False
 
+  def isDead(self):
+    return self.my_state == None
+
   def press(self, b):
     # logging.info('agent.press')
     self.pressed.add(b)
 
   def send_actions(self):
-    # logging.info('agent.send_actions ' + str(self.pressed))
+    # logging.info('agent.send_actions ' + str(dict(
+    #   type = 'actions',
+    #   actions = ''.join(self.pressed),
+    #   rematch = self.rematch,
+    #   id = self.state_update['id']
+    # )))
     assert self.state_update
     self.connection.send_json(dict(
       type = 'actions',
       actions = ''.join(self.pressed),
+      rematch = self.rematch,
       id = self.state_update['id']
     ))
     self.pressed.clear()

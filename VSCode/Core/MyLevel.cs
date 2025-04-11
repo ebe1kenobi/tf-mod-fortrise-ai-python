@@ -1,5 +1,4 @@
-﻿using System.Xml;
-
+﻿using Monocle;
 
 namespace TFModFortRiseAiPython
 {
@@ -22,13 +21,15 @@ namespace TFModFortRiseAiPython
 
 		public static void Update_patch(On.TowerFall.Level.orig_Update orig, global::TowerFall.Level self) {
       nbUpdate++;
+      orig(self);
+      if (AIPython.Training && AIPython.Config.speed > 1)
+      {
+        Engine.TimeRate = AIPython.Config.speed;
+      }
       if (!(self.Ending))
       {
         AIPython.Update(self);
-
       }
-
-      orig(self);
     }
 
     public static void HandlePausing_patch(On.TowerFall.Level.orig_HandlePausing orig, global::TowerFall.Level self)
@@ -37,7 +38,7 @@ namespace TFModFortRiseAiPython
       if (AIPython.Training)
       //if (AIPython.Training && !AIPython.IsHumanPlaying())
       {
-        return;
+        return; //todo trining
       }
 
       orig(self);

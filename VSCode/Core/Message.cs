@@ -28,6 +28,9 @@ namespace TFModFortRiseAiPython
     [DataMember(EmitDefaultValue = true)]
     public string type;
 
+    [DataMember(EmitDefaultValue = false)]
+    public bool rematch;
+
     [DataMember(EmitDefaultValue = true)]
     public int maxAgent;
 

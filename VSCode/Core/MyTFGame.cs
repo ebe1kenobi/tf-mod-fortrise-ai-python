@@ -45,7 +45,7 @@ namespace TFModFortRiseAiPython
           Task.Run(() => AIPython.StartServer());
           Logger.Info("Server is running...");
 
-          while (AIPython.nbRemoteAgentWaited == 0 || AIPython.nbRemoteAgentWaited != AIPython.nbRemoteAgentConnected)
+          while (AIPython.getNbRemoteAgentWaited() == 0 || AIPython.getNbRemoteAgentWaited() != AIPython.getNbRemoteAgentConnected())
           {
             Thread.Sleep(1000);
           }
@@ -64,7 +64,6 @@ namespace TFModFortRiseAiPython
       {
         //disable keyboard
         if (TFGame.PlayerInputs[i] == null) continue;
-        //Logger.Info(TFGame.PlayerInputs[i].GetType().ToString());
 
         if (TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.KeyboardInput"
             && TFGame.PlayerInputs[i].GetType().ToString() != "TowerFall.XGamepadInput")
@@ -83,7 +82,13 @@ namespace TFModFortRiseAiPython
 
       for (int i = 0; i < AIPython.nbRemoteAgentConnected; i++)
       {
-        var agent = AIPython.reconfigOperation.Config.agents[i];
+        AgentConfig agent;
+        if (AIPython.Training && AIPython.reconfigOperation.Config.agents.Count < i + 1) {
+          agent = new AgentConfig();
+        }
+        else {
+          agent = AIPython.reconfigOperation.Config.agents[i];
+        }
 
         if (AIPython.reconfigOperation.Config.trainingPlayer[i].type == TrainingPlayer.Type.None)
         {
@@ -101,7 +106,7 @@ namespace TFModFortRiseAiPython
     public static void Update_patch(On.TowerFall.TFGame.orig_Update orig, global::TowerFall.TFGame self, GameTime gameTime)
     {
       orig(self, gameTime);
-      if (LoaderAIImport.CanAddAgent() && AIPython.isAgentReady && !agentAdded)
+      if (LoaderAIImport.CanAddAgent() && AIPython.getIsAgentReady() && !agentAdded)
       {
         //keeps only the human controller needed and delete the other for the ia input 
         if (AIPython.Training)

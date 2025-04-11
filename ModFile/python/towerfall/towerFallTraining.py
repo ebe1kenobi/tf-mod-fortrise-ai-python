@@ -12,12 +12,7 @@ import psutil
 from psutil import Popen
 
 from .connection import Connection
-from agents import SimpleAgentLevel0
-from agents import SimpleAgentLevel1
-from agents import MovementAgent
-from agents import NoMoveAgent
-from agents import Jimmy
-
+from agents import TrainingAgent
 
 _DEFAULT_STEAM_PATH_WINDOWS = 'C:/Program Files (x86)/Steam/steamapps/common/TowerFall'
 _ENV_TOWERFALL_PATH = 'TOWERFALL_PATH'
@@ -25,21 +20,15 @@ _ENV_TOWERFALL_PATH = 'TOWERFALL_PATH'
 class TowerfallError(Exception):
   pass
 
-class Towerfall:
-  '''
-  Creates or reuses a Towerfall game process.
-
-  params towerfall_path: The parent path where Towerfall.exe is located.
-  params timeout: The timeout for the management API (Config, Reset).
-  params verbose: The verbosity level. 0: no logging, 1: much logging.
-  '''
+class TowerFallTraining:
   def __init__(self,
       config: Mapping[str, Any] = {},
       towerfall_path: str = _DEFAULT_STEAM_PATH_WINDOWS,
       timeout: float = 2,
       verbose: int = 0):
-    # logging.info('Towerfall.__init__')
+    logging.info('Towerfall.__init__')
 
+    self.verbose = 1
     if not os.path.exists(towerfall_path):
       env_towerfall_path = os.environ.get(_ENV_TOWERFALL_PATH)
       if env_towerfall_path:
@@ -59,11 +48,11 @@ class Towerfall:
     self.verbose = verbose
     tries = 0
     while True:
-      self.port = self._attain_game_port()
+      logging.info('while true')
 
+      self.port = self._attain_game_port()
       try:
         self.open_connection = Connection(self.port, timeout=timeout, verbose=verbose)
-        self.send_config(config)
         logging.info('Towerfall. CONNECT PROCESS')
         break
       except TowerfallError:
@@ -71,8 +60,7 @@ class Towerfall:
           raise TowerfallError('Could not config a Towerfall process.')
         tries += 1
 
-
-  def run(self):
+  def join_game(self):
     # logging.info('Towerfall.logging')
     connections = []
     agents = []
@@ -81,34 +69,27 @@ class Towerfall:
       # if agent['type'] == 'human':
         # continue
       connections.append(self.join(timeout=6000, verbose=self.verbose))
-      if 'ai' in agent and agent['ai'] == 'MovementAgent':
-        logging.info('MovementAgent')
-        agents.append(MovementAgent(i, connections[i]))
-      elif 'ai' in agent and agent['ai'] == 'SimpleAgentLevel1':
-        logging.info('SimpleAgentLevel1')
-        agents.append(SimpleAgentLevel1(i, connections[i]))
-      elif 'ai' in agent and agent['ai'] == 'NoMoveAgent':
-        logging.info('NoMoveAgent')
-        agents.append(NoMoveAgent(i, connections[i]))
-      elif 'ai' in agent and agent['ai'] == 'Jimmy':
-        logging.info('Jimmy')
-        agents.append(Jimmy(i, connections[i]))
+      if 'ai' in agent and agent['ai'] == 'TrainingAgent':
+        logging.info('TrainingAgent')
+        agents.append(TrainingAgent(3, connections[i]))
       else:
-        logging.info('SimpleAgentLevel0')
-        agents.append(SimpleAgentLevel0(i, connections[i]))
-      i += 1
+        raise TowerfallError('Only TrainingAgent can be used')
+
+      # i += 1
+
+    return agents[i]
 
     ##################################################
     # EAch agent is a thread (game still freeze sometime when playing)
     ##################################################
-    threads = []
-    for agent in agents:
-      thread = threading.Thread(target=agent.run)
-      threads.append(thread)
-      thread.start()
+    # threads = []
+    # for agent in agents:
+    #   thread = threading.Thread(target=agent.run)
+    #   threads.append(thread)
+    #   thread.start()
 
-    for thread in threads:
-      thread.join()
+    # for thread in threads:
+    #   thread.join()
 
     ##################################################
     # To use training comment the thread above and decomment the code below :
@@ -116,10 +97,11 @@ class Towerfall:
     # while True: #TODO : use thread and each agent read from its connection : each agent -> thread
     #  # Read the state of the game then replies with an action.
     #  for connection, agent in zip(connections, agents):
-    #    # logging.info('towerfall.run : connection.read_json')
+    #   #  logging.info('towerfall.run : connection.read_json')
     #    game_state = connection.read_json()
-    #    # logging.info('towerfall.run : agent.act')
+    #   #  logging.info('towerfall.run : agent.act')
     #    agent.act(game_state)
+
 
   def join(self, timeout: float = 2, verbose: int = 0) -> Connection:
     '''
@@ -130,7 +112,7 @@ class Towerfall:
     returns: A connection to a Towerfall game. This should be used by the agent to interact with the game.
     '''
     # logging.info('ToxerFall.join')
-    connection = Connection(self.port, timeout=timeout, verbose=verbose)
+    connection = Connection(self.port, timeout=timeout, verbose=verbose, log_cap=1000, record_path='capture.log')
     connection.send_json(dict(type='join'))
     response = connection.read_json()
     if response['type'] != 'result':
@@ -140,100 +122,15 @@ class Towerfall:
     self._try_log(logging.info, f'Successfully joined the game. Port: {self.port}')
     return connection
 
-  def send_reset(self, entities: Optional[List[Dict[str, Any]]] = None):
-    '''
-    Sends a game reset. This will recreate the entities in the game in the same scenario. To change the scenario, use send_config.
-
-    params entities: The entities to reset. If None, the entities specified in the last reset will be used.
-    '''
-    # logging.info('ToxerFall.send_reset')
-
-    # logging.info('ToxerFall.send_request_json')
-    response = self.send_request_json(dict(type='reset', entities=entities))
-    # logging.info('response:' + str(response))
-
-    if response['type'] != 'result':
-      raise TowerfallError(f'Unexpected response type: {response["type"]}')
-    if not response['success']:
-      raise TowerfallError(f'Failed to reset the game. Port: {self.port}, Response: {response["message"]}')
-    self._try_log(logging.info, f'Successfully reset the game. Port: {self.port}')
-
-  def send_config(self, config = None):
-    '''
-    Sends a game configuration. This will restart the session of the game in the specified scenario and specified number of agents.
-
-    params config: The configuration to send. If None, the configuration specified in the last config will be used.
-    '''
-    # logging.info('TowerFall.send_config')
-    if config:
-      self.config = config
-    else:
-      config = self.config
-
-    # logging.info('TowerFall.send_config')
-
-    response = self.send_request_json(dict(type='config', config=config))
-    # logging.info('response = '+ str(response))
-    if response['type'] != 'result':
-      raise TowerfallError(f'Unexpected response type: {response["type"]}')
-    if not response['success']:
-      raise TowerfallError(f'Failed to configure the game. Port: {self.port}, Response: {response["message"]}')
-
-    # Keep only the agent authorized by the Game
-    logging.info('Max agent authorized to join : ' + str(response['maxAgent']))
-    nbFiltered = 0;
-    agents = []
-    for a in config['agents']:
-      # if a['type'] == 'remote':
-      nbFiltered += 1
-      agents.append(a)
-      if nbFiltered == response['maxAgent']:
-        break
-    config['agents'] = agents
-    self.config = config
-
-    logging.info('self.config  = '+ str(self.config ))
-
-
   def send_request_json(self, obj: Mapping[str, Any]):
     #logging.info("TowerFall.send_request_json")
     self.open_connection.send_json(obj)
-    #logging.info("self.open_connection.read_json()")
+    logging.info("self.open_connection.read_json()")
     return self.open_connection.read_json()
 
-  @classmethod
-  def close_all(cls):
-    '''
-    Closes all Towerfall processes.
-    '''
-    # logging.info("TowerFall.close_all")
-    logging.info('Closing all TowerFall.exe processes...')
-    for process in psutil.process_iter(attrs=['pid', 'name']):
-      logging.info(f'Checking process {process.pid} {process.name()}')
-      if process.name() != 'TowerFall.exe':
-        continue
-      try:
-        logging.info(f'Killing process {process.pid}...')
-        os.kill(process.pid, signal.SIGTERM)
-      except Exception as ex:
-        logging.error(f'Failed to kill process {process.pid}: {ex}')
-        continue
-
-  def close(self):
-    '''
-    Close the management connection. This will free the Towerfall process to be used by other clients.
-    '''
-    # logging.info("TowerFall.close")
-    self.open_connection.close()
-
   def _attain_game_port(self) -> int:
-    #logging.info("TowerFall._attain_game_port")
+    logging.info('_attain_game_port')
     metadata = self._find_compatible_metadata()
-
-    if not metadata:
-      self._try_log(logging.info, f'Starting new process from {self.towerfall_path_exe}.')
-      pargs = [self.towerfall_path_exe]
-      Popen(pargs, cwd=self.towerfall_path)
 
     tries = 0
     self._try_log(logging.info, f'Waiting for available process.')
@@ -247,7 +144,7 @@ class Towerfall:
     return metadata['port']
 
   def _find_compatible_metadata(self) -> Optional[Mapping[str, Any]]:
-    #logging.info("TowerFall._find_compatible_metadata")
+    logging.info("TowerFall._find_compatible_metadata")
     if not os.path.exists(self.pool_path):
       return None
     dirs = list(os.listdir(self.pool_path))
@@ -262,7 +159,7 @@ class Towerfall:
       try:
         with open(os.path.join(self.pool_path, file_name), 'r') as file:
           try:
-            metadata = Towerfall._load_metadata(file)
+            metadata = TowerFallTraining._load_metadata(file)
           except (ValueError, json.JSONDecodeError, FileNotFoundError) as ex:
             self._try_log(logging.warning, f'Invalid metadata file {file_name}. Exception: {ex}')
             continue
@@ -274,7 +171,7 @@ class Towerfall:
 
   @staticmethod
   def _load_metadata(file: TextIOWrapper) -> Mapping[str, Any]:
-    logging.info("TowerFall._load_metadata")
+    logging.info("TowerFallTraining._load_metadata")
     metadata = json.load(file)
     if 'port' not in metadata:
       raise ValueError('Port not found in metadata.')
@@ -293,4 +190,16 @@ class Towerfall:
     # logging.info("TowerFall._try_log")
     if self.verbose > 0:
       log_fn(message)
+
+  def send_rematch(self):
+    logging.info('send_rematch')
+    response = self.send_request_json(dict(type='rematch'))
+    # logging.info('response = '+ str(response))
+    # if response['type'] != 'result':
+    #   raise TowerfallError(f'Unexpected response type: {response["type"]}')
+    # if not response['success']:
+    #   raise TowerfallError(f'Failed to send rematch message. Port: {self.port}, Response: {response["message"]}')
+
+    # Keep only the agent authorized by the Game
+    logging.info('Rematch ongoing, waiting scenario')
 

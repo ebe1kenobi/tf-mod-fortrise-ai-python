@@ -17,6 +17,15 @@ namespace TFModFortRiseAiPython
     public int subLevel;
 
     [DataMember(EmitDefaultValue = false)]
+    public bool noTreasure;
+
+    [DataMember(EmitDefaultValue = false)]
+    public bool noHazards;
+    
+    [DataMember(EmitDefaultValue = false)]
+    public float speed;
+
+    [DataMember(EmitDefaultValue = false)]
     public int skipWaves;
 
     [DataMember(EmitDefaultValue = false)]

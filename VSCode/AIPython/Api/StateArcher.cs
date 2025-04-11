@@ -8,6 +8,9 @@ namespace TFModFortRiseAiPython
     public bool wing;
     public List<string> arrows;
     public bool dead;
+    public int killer;
+    public bool catchArrow;
+    public bool stealArrow;
     public bool onGround;
     public bool onWall;
     public Vec2 aimDirection;

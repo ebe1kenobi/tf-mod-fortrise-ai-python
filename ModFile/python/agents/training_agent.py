@@ -12,11 +12,9 @@ default_logging()
 _VERBOSE = 0
 _TIMEOUT = 10
 
-class NoMoveAgent(Agent):
+class TrainingAgent(Agent):
 
   def act(self, game_state: Mapping[str, Any]):
-    if super().act(game_state):
-      return True
+    # logging.info('TrainAgent.act')
 
-    self.send_actions()
-    return True
+    return super().act(game_state)

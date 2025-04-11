@@ -1,0 +1,1 @@
+python python\_run_towerfall_for_training.py

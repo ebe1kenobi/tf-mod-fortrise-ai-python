@@ -22,9 +22,14 @@ namespace TFModFortRiseAiPython
     public const string AINAME = "AIPy";
     
     public static readonly Random Random = new Random((int)DateTime.UtcNow.Ticks);
-
+    //private static readonly object _lockJoin = new object();
+    //private static readonly object _lockNbRemote = new object();
+    //private static readonly object _lockIsAgentReady = new object();
+    //private static readonly object _lockNbRemoteAgentWaited = new object();
+    //private static readonly object _lockRematch = new object();
+    //public static readonly object _lockSend = new object();
     //private static readonly TimeSpan ellapsedGameTime = new TimeSpan(10000000 / 60);
-
+    
 
     //AIPython.Training
     public static int maxAgent = 4;
@@ -40,7 +45,7 @@ namespace TFModFortRiseAiPython
     //static bool levelLoaded = false;
     //static List<int> listPlayerAIIndexPlaying = new List<int>();
     static StateUpdate stateUpdate = new StateUpdate();
-    static int frame = 0;
+    public static int frame = 0;
     public static String serializedStateUpdate = "";
 
     public static bool Training = false;
@@ -64,32 +69,32 @@ namespace TFModFortRiseAiPython
       "TowerFall.Lantern",
       "TowerFall.Chain",
       "TowerFall.Cobwebs",
-      "TowerFall.LevelTiles",
-      "TowerFall.DefaultArrow",
+      //"TowerFall.LevelTiles",
+      //"TowerFall.DefaultArrow",
       "TowerFall.DefaultHat",
       "TowerFall.LightFade",
-      "TowerFall.PlayerCorpse",
+      //"TowerFall.PlayerCorpse",
       "TowerFall.DeathSkull",
       "TowerFall.CatchShine",
       "TowerFall.TreasureChest",
       "TowerFall.BGSkeleton",
       "TowerFall.JumpPad",
-      "TowerFall.CrackedPlatform",
+      //"TowerFall.CrackedPlatform",
       "TowerFall.Spikeball",
       "TowerFall.OrbPickup",
       "TowerFall.Orb",
       "TowerFall.Crown",
       "TowerFall.BGBigMushroom",
-      "TowerFall.CrackedWall",
+      //"TowerFall.CrackedWall",
       "TowerFall.ArrowTypePickup",
       "TowerFall.FloatText",
       "TowerFall.ShieldPickup",
-      "TowerFall.BombArrow",
+      //"TowerFall.BombArrow",
       "TowerFall.BombParticle",
       "TowerFall.Explosion",
       "TowerFall.BombPickup",
-      "TowerFall.LaserArrow",
-      "TowerFall.MovingPlatform",
+      //"TowerFall.LaserArrow",
+      //"TowerFall.MovingPlatform",
       "TowerFall.LavaControl",
       "TowerFall.Lava",
       "TowerFall.WingsPickup",
@@ -97,37 +102,37 @@ namespace TFModFortRiseAiPython
       "TowerFall.SnowClump",
       "TowerFall.Ice",
       "TowerFall.PlayerBreath",
-      "TowerFall.DrillArrow",
+      //"TowerFall.DrillArrow",
       "TowerFall.SpeedBootsPickup",
-      "TowerFall.Miasma",
+      //"TowerFall.Miasma",
       "TowerFall.KingIntro",
       "TowerFall.SwitchBlockControl",
-      "TowerFall.SwitchBlock",
+      //"TowerFall.SwitchBlock",
       "TowerFall.LevelEntity",
-      "TowerFall.ShiftBlock",
+      //"TowerFall.ShiftBlock",
       "TowerFall.MirrorPickup",
-      "TowerFall.BoltArrow",
+      //"TowerFall.BoltArrow",
       "TowerFall.SmallShock",
       "TowerFall.WaterDrop",
-      "TowerFall.ProximityBlock",
-      "TowerFall.MoonGlassBlock",
+      //"TowerFall.ProximityBlock",
+      //"TowerFall.MoonGlassBlock",
       "TowerFall.HotCoals",
       "TowerFall.RainDrops",
-      "TowerFall.LoopPlatform",
+      //"TowerFall.LoopPlatform",
       "TowerFall.PirateBanner",
       "TowerFall.GhostShipWindow",
-      "TowerFall.RotatePlatform",
+      //"TowerFall.RotatePlatform",
       "TowerFall.Mud",
-      "TowerFall.SensorBlock",
-      "TowerFall.BrambleArrow",
+      //"TowerFall.SensorBlock",
+      //"TowerFall.BrambleArrow",
       "TowerFall.Brambles",
-      "TowerFall.CrumbleBlock",
-      "TowerFall.TriggerArrow",
-      "TowerFall.PrismArrow",
-      "TowerFall.CrumbleWall",
+      //"TowerFall.CrumbleBlock",
+      //"TowerFall.TriggerArrow",
+      //"TowerFall.PrismArrow",
+      //"TowerFall.CrumbleWall",
       "Monocle.ParticleSystem",
       //"TowerfallAi.Mod.PlayTag",
-      "TowerFall.FeatherArrow",
+      //"TowerFall.FeatherArrow",
 "TowerFall.Prism",
 "TowerFall.PrismParticle",
 "TowerFall.CrumbleWallChunk",
@@ -326,7 +331,6 @@ namespace TFModFortRiseAiPython
       RefreshStateUpdate(level);
       stateUpdate.dt = Engine.TimeMult;
       stateUpdate.id = frame;
-
       serializedStateUpdate = JsonConvert.SerializeObject(stateUpdate);
     }
 
@@ -482,11 +486,11 @@ namespace TFModFortRiseAiPython
           if (type.ToString() != "TowerFall.Player" && !listEntityToIgnore.Contains(type.ToString()))
           {
             //get entity to ignore on log
-            listEntityToIgnore.Add(type.ToString());
+            //listEntityToIgnore.Add(type.ToString()); //training todo
             // cd "/c/Program Files (x86)/Steam/steamapps/common/TowerFall/modcompilkenobi/logs"; grep "1 ==" *
           }
           //TODO
-          //if (listEntityToIgnore.Contains(type.ToString())) continue; //ignore all except player, TODO modify
+          if (listEntityToIgnore.Contains(type.ToString())) continue; //ignore all except player, TODO modify
         }
 
         Func<Entity, StateEntity> getState;
@@ -561,72 +565,179 @@ namespace TFModFortRiseAiPython
       server.Stop();
     }
 
-    private static void HandleConnectionClient(TcpClient client)
+    private static async Task HandleConnectionClient(TcpClient client)
     {
       try
       {
         NetworkStream stream = client.GetStream();
-        Message message = Read(stream);
+        Message message = await ReadAsync(stream); // Use async Read
 
-        if (message.type == "join")
+        if (message == null) return;
+
+        Logger.Info($"Received: {message.type}");
+
+        switch (message.type)
         {
-          Logger.Info($"Received: {message.type}");
-          HandleJoinMessage(message, stream);
-          Logger.Info($"HandleJoinMessage");
-        }
-        else if (message.type == "config")
-        {
-          Logger.Info($"Received: {message.type}");
-          HandleConfigConnection(message, stream);
-          Logger.Info($"HandleNewConfigConnection");
-        }
-        else if (message.type == "rematch")
-        {
-          Logger.Info($"Received: {message.type}");
-          HandleRematchMessage(message, stream);
-          Logger.Info($"HandleRematchMessage");
-        }
-        //else if (message.type == "reset")
-        //{
-        //  Logger.Info($"Received: {message.type}");
-        //  //HandleResetMessage(connection, message);
-        //}
-        else
-        {
-          Logger.Info("Message type not supported: {0}".Format(message.type));
+          case "join":
+            await HandleJoinMessageAsync(message, stream);
+            break;
+          case "config":
+            await HandleConfigConnectionAsync(message, stream);
+            break;
+          case "rematch":
+            await HandleRematchMessageAsync(message, stream);
+            break;
+          default:
+            Logger.Info($"Message type not supported: {message.type}");
+            break;
         }
       }
       catch (Exception ex)
       {
         Logger.Info($"Client error: {ex.Message}");
-        //throw ex;
+      }
+    }
+
+
+    //private static void HandleConnectionClient(TcpClient client)
+    //{
+    //  //lock (AIPython._lockSend)
+    //  {
+    //    try
+    //    {
+    //      NetworkStream stream = client.GetStream();
+    //      Message message = Read(stream);
+
+    //      if (message.type == "join")
+    //      {
+    //        Logger.Info($"Received: {message.type}");
+    //        HandleJoinMessage(message, stream);
+    //        Logger.Info($"HandleJoinMessage");
+    //      }
+    //      else if (message.type == "config")
+    //      {
+    //        Logger.Info($"Received: {message.type}");
+    //        HandleConfigConnection(message, stream);
+    //        Logger.Info($"HandleNewConfigConnection");
+    //      }
+    //      else if (message.type == "rematch")
+    //      {
+    //        Logger.Info($"Received: {message.type}");
+    //        HandleRematchMessage(message, stream);
+    //        Logger.Info($"HandleRematchMessage");
+    //      }
+    //      //else if (message.type == "reset")
+    //      //{
+    //      //  Logger.Info($"Received: {message.type}");
+    //      //  //HandleResetMessage(connection, message);
+    //      //}
+    //      else
+    //      {
+    //        Logger.Info("Message type not supported: {0}".Format(message.type));
+    //      }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //      Logger.Info($"Client error: {ex.Message}");
+    //      //throw ex;
+    //    }
+    //  }
+    //}
+
+    public static int getNbRemoteAgentConnected() {
+      //lock (_lockNbRemote) // Empêche l'accès simultané
+      {
+        return nbRemoteAgentWaited;
+      }
+    }
+
+    public static int getNbRemoteAgentWaited()
+    {
+      //lock (_lockNbRemoteAgentWaited) // Empêche l'accès simultané
+      {
+        return nbRemoteAgentWaited;
+      }
+    }
+
+    public static bool getIsAgentReady()
+    {
+      //lock (_lockNbRemote) // Empêche l'accès simultané
+      {
+        return isAgentReady;
       }
     }
 
     public static void HandleJoinMessage(Message message, NetworkStream stream)
     {
-      if (isAgentReady) {
-        Logger.Info("Warning, All agent Waited ("+ nbRemoteAgentWaited + ") are already connected");
-        return;
+      //lock (_lockNbRemote) // Empêche l'accès simultané
+      {
+        if (isAgentReady)
+        {
+          Logger.Info("Warning, All agent Waited (" + nbRemoteAgentWaited + ") are already connected");
+          return;
+        }
+
+        //nbRemoteAgent = getNbRemoteAgentConnected();
+        AgentInputs[nbRemoteAgentConnected] = new Input(nbRemoteAgentConnected);
+        agents[nbRemoteAgentConnected] = new AIPythonAgent(nbRemoteAgentConnected, AINAME, AgentInputs[nbRemoteAgentConnected], stream);
+
+        if (Training)
+        {
+          //the agent will not play for this training game
+          if (reconfigOperation.Config.trainingPlayer[nbRemoteAgentConnected].type == TrainingPlayer.Type.None)
+          {
+            agents[nbRemoteAgentConnected].setPlaying(false);
+          }
+        }
+
+        nbRemoteAgentConnected++;
+
+        if (nbRemoteAgentConnected == nbRemoteAgentWaited)
+        {
+          isAgentReady = true;
+        }
+
+        Write(JsonConvert.SerializeObject(new Message
+        {
+          type = Message.Type.Result,
+          success = true,
+          message = "Game will start once all agents join."
+        }), stream);
       }
-      AgentInputs[nbRemoteAgentConnected] = new Input(nbRemoteAgentConnected);
-      agents[nbRemoteAgentConnected] = new AIPythonAgent(nbRemoteAgentConnected, AINAME, AgentInputs[nbRemoteAgentConnected], stream);
-        
-      if (Training) {
-        //the agent will not play for this training game
-        if (reconfigOperation.Config.trainingPlayer[nbRemoteAgentConnected].type == TrainingPlayer.Type.None) {
-          agents[nbRemoteAgentConnected].setPlaying(false);
+    }
+
+    private static readonly object _lock = new object(); // Protection des variables partagées
+
+    public static async Task HandleJoinMessageAsync(Message message, NetworkStream stream)
+    {
+      //lock (_lock)
+      {
+        if (isAgentReady)
+        {
+          Logger.Info($"Warning: Tous les agents attendus ({nbRemoteAgentWaited}) sont déjà connectés.");
+          return;
+        }
+
+        AgentInputs[nbRemoteAgentConnected] = new Input(nbRemoteAgentConnected);
+        agents[nbRemoteAgentConnected] = new AIPythonAgent(nbRemoteAgentConnected, AINAME, AgentInputs[nbRemoteAgentConnected], stream);
+
+        if (Training)
+        {
+          if (reconfigOperation.Config.trainingPlayer[nbRemoteAgentConnected].type == TrainingPlayer.Type.None)
+          {
+            agents[nbRemoteAgentConnected].setPlaying(false);
+          }
+        }
+
+        nbRemoteAgentConnected++;
+
+        if (nbRemoteAgentConnected == nbRemoteAgentWaited)
+        {
+          isAgentReady = true;
         }
       }
 
-      nbRemoteAgentConnected++;
-
-      if (nbRemoteAgentConnected == nbRemoteAgentWaited)
-      {
-        isAgentReady = true;
-      }
-
-      Write(JsonConvert.SerializeObject(new Message
+      await WriteAsync(JsonConvert.SerializeObject(new Message
       {
         type = Message.Type.Result,
         success = true,
@@ -634,10 +745,35 @@ namespace TFModFortRiseAiPython
       }), stream);
     }
 
+
+    public static bool isRematch() {
+      //lock (_lockRematch)
+      {
+        return Rematch;
+      }
+    }
+
     public static void HandleRematchMessage(Message message, NetworkStream stream)
     {
-      Rematch = true;
+      //lock (_lockRematch) {
+        Rematch = true;
+      //}
       Write(JsonConvert.SerializeObject(new Message
+      {
+        type = Message.Type.Result,
+        success = true,
+        message = "Rematch will start"
+      }), stream);
+    }
+
+    public static async Task HandleRematchMessageAsync(Message message, NetworkStream stream)
+    {
+      //lock (_lock)
+      {
+        Rematch = true;
+      }
+
+      await WriteAsync(JsonConvert.SerializeObject(new Message
       {
         type = Message.Type.Result,
         success = true,
@@ -676,6 +812,33 @@ namespace TFModFortRiseAiPython
       }), stream);
     }
 
+    public static async Task HandleConfigConnectionAsync(Message message, NetworkStream stream)
+    {
+      maxAgent = TFModFortRiseAiPythonModule.EightPlayerMod ? 8 : 4;
+
+      ValidateConfig(message.config);
+
+      nbRemoteAgentWaited = Math.Min(message.config.nbAgents, maxAgent);
+
+      agents = new AIPythonAgent[maxAgent];
+      AgentInputs = new PlayerInput[maxAgent];
+
+      reconfigOperation = new ReconfigOperation()
+      {
+        Config = message.config
+      };
+
+      Training = message.config.training;
+
+      await WriteAsync(JsonConvert.SerializeObject(new Message
+      {
+        type = Message.Type.Result,
+        maxAgent = nbRemoteAgentWaited,
+        success = true
+      }), stream);
+    }
+
+
     public static bool PreUpdate()
     {
       //lock (ongoingOperationLock)
@@ -702,7 +865,7 @@ namespace TFModFortRiseAiPython
             StartNewSession();
           }
         }
-      else if (Rematch)
+      else if (isRematch())
       {
         if (Training)
         {
@@ -749,6 +912,20 @@ namespace TFModFortRiseAiPython
       stream.Write(payload, 0, payload.Length);
     }
 
+    public static async Task WriteAsync(string text, NetworkStream stream)
+    {
+      byte[] payload = Encoding.ASCII.GetBytes(text);
+      int size = payload.Length;
+
+      byte[] header = new byte[2];
+      header[0] = (byte)(size >> 8);
+      header[1] = (byte)(size & 0x00FF);
+
+      await stream.WriteAsync(header, 0, header.Length);
+      await stream.WriteAsync(payload, 0, payload.Length);
+    }
+
+
     public static Message Read(NetworkStream stream)
     {
       try
@@ -759,17 +936,22 @@ namespace TFModFortRiseAiPython
         while (true)
         {
           int bytesRead = stream.Read(header, 0, header.Length);
-          if (bytesRead == 0) break; // Connection closed
+          if (bytesRead == 0)
+          {
+            break; // Connection closed
+          }
 
           int bytesToReceive = header[0] << 8 | header[1];
 
           bytesRead = stream.Read(buffer, 0, bytesToReceive);
-          if (bytesRead == 0) break; // Connection closed
+          if (bytesRead == 0)
+          {
+            break; // Connection closed
+          }
 
           rawMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
           break;
         }
-
         Message message = JsonConvert.DeserializeObject<Message>(rawMessage);
         return message;
       }
@@ -779,6 +961,40 @@ namespace TFModFortRiseAiPython
         throw ex;
       }
     }
+
+    public static async Task<Message> ReadAsync(NetworkStream stream)
+    {
+      try
+      {
+        byte[] header = new byte[2];
+        byte[] buffer = new byte[10000];
+        string rawMessage = "";
+
+        int bytesRead = await stream.ReadAsync(header, 0, header.Length);
+        if (bytesRead == 0)
+        {
+          return null;
+        }
+
+        int bytesToReceive = header[0] << 8 | header[1];
+
+        bytesRead = await stream.ReadAsync(buffer, 0, bytesToReceive);
+        if (bytesRead == 0)
+        {
+          return null;
+        }
+
+        rawMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+        return JsonConvert.DeserializeObject<Message>(rawMessage);
+      }
+      catch (Exception ex)
+      {
+        Logger.Info($"Client error: {ex.Message}");
+        return null;
+      }
+    }
+
 
 
     public static void ValidateConfig(MatchConfig config)
@@ -895,7 +1111,6 @@ namespace TFModFortRiseAiPython
     private static void StartNewSession()
     {
       Logger.Info("Starting a new session.");
-      Logger.Info("Create match settings.");
       CreateMatchSettings();
 
       
@@ -908,7 +1123,10 @@ namespace TFModFortRiseAiPython
       //session.StartRound();
       Logger.Info("Session started.");
       //sessionEnded = false;
-      Rematch = false;
+      //lock (_lockRematch)
+      {
+        Rematch = false;
+      }
       //Agents.SessionRestarted();
     }
 
@@ -1013,45 +1231,39 @@ namespace TFModFortRiseAiPython
         throw new Exception("Game mode not supported: {0}".Format(Config.mode));
       }
 
+      if (Config.noTreasure) {
+        Logger.Info("set NoTreasure");
+        matchSettings.Variants.NoTreasure.Value = true;
+      }
+
+      
+
+      //if (Config.speed > 1)
+      //{
+      //  Logger.Info("set speed");
+      //  Engine.TimeRate = Config.speed;
+      //}
+
       //int indexHuman = 0;
       //int indexRemote = Config.nbHuman;
       //int indexForTeam = 0;
 
-      
+
 
       for (int i = 0; i < nbRemoteAgentConnected; i++)
       {
-
-        var agent = Config.agents[i];
-        // when human in agent config, the distribution is erronous when Teams are involved !
-        // because the human joystick are always at the beginning and the remote at the end
-        // if human, we need to calculate the right index Like in TFGame.PlayerInput
-        //if (agent.type == "human")
-        //{
-        //  indexForTeam = indexHuman;
-        //  indexHuman++;
-        //}
-        //else
-        //{
-        //  indexForTeam = indexRemote;
-        //  indexRemote++;
-        //}
-
-        //Logger.Info("Set players playing " + i);
-
-        //TFGame.Players[i] = true;
-
-        //if (i >= Config.nbHuman)
-        //{
-        //  Logger.Info("Set players playing input agent " + i);
-
-        //  TFGame.PlayerInputs[i] = AIPython.agents[i].getInput();
-        //}
-        //TFGame.Characters[i] = agent.GetArcherIndex();
-        //TFGame.AltSelect[i] = agent.GetArcherType();
+        //var agent = Config.agents[i];
+        AgentConfig agent;
+        if (AIPython.Training && Config.agents.Count < i + 1)
+        {
+          agent = new AgentConfig();
+        }
+        else
+        {
+          agent = Config.agents[i];
+        }
 
         matchSettings.Teams[i] = agent.GetTeam();
-        //indexForTeam++;
       }
 
       //hide the intro control for level 0 or trigger controle for tower N

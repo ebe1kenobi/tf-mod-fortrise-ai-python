@@ -31,7 +31,6 @@ namespace TFModFortRiseAiPython
 
     public static void GenLevels_patch(On.TowerFall.VersusLevelSystem.orig_GenLevels orig, global::TowerFall.VersusLevelSystem self, global::TowerFall.MatchSettings matchSettings)
     {
-      Logger.Info("GenLevels_patch");
       if (!AIPython.Training) {
         orig(self, matchSettings);
         return;

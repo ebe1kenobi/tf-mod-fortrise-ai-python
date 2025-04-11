@@ -41,6 +41,7 @@ namespace TFModFortRiseAiPython
       GameTips.Load();
       MyVersusStart.Load();
       MyVersusLevelSystem.Load();
+      MyPlayer.Load();
 
       typeof(LoaderAIImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
@@ -62,6 +63,7 @@ namespace TFModFortRiseAiPython
       GameTips.Unload();
       MyVersusStart.Unload();
       MyVersusLevelSystem.Unload();
+      MyPlayer.Unload();
 
     }
 
