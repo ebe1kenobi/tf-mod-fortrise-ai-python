@@ -15,6 +15,6 @@ _TIMEOUT = 10
 class TrainingAgent(Agent):
 
   def act(self, game_state: Mapping[str, Any]):
-    # logging.info('TrainAgent.act')
+    logging.info('TrainAgent.act')
 
     return super().act(game_state)

@@ -14,6 +14,7 @@ using System.Threading;
 using MonoMod.Utils;
 using TFModFortRiseLoaderAI;
 using System.Text.RegularExpressions;
+using FortRise;
 
 namespace TFModFortRiseAiPython
 {
@@ -950,8 +951,11 @@ namespace TFModFortRiseAiPython
           }
 
           rawMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+          Logger.Info("rawMessage");
+          Logger.Info(rawMessage);
           break;
         }
+        Logger.Info("rawMessage = " + rawMessage);
         Message message = JsonConvert.DeserializeObject<Message>(rawMessage);
         return message;
       }
@@ -1028,6 +1032,7 @@ namespace TFModFortRiseAiPython
         case "DarkWorld":
         case "Trials":
         case "PlayTag":
+        case "Respawn":
           //TODO
           //skipWaves
           //solids
@@ -1177,6 +1182,12 @@ namespace TFModFortRiseAiPython
         matchSettings = new MatchSettings(levelSystem, Modes.LastManStanding, matchLength);
         matchSettings.Variants.TournamentRules();
       }
+      else if (Config.mode == GameModes.Respawn)
+      {
+        Logger.Info("Configuring Respawn mode.");
+        matchSettings = new MatchSettings(levelSystem, ModRegisters.GameModeType<Respawn>(), matchLength);
+        matchSettings.Variants.TournamentRules();
+      }
       //else if (TFModFortRiseAIModule.IsModPlaytagExists && Config.mode == GameModes.PlayTag)
       //{
       //  Logger.Info("Configuring PlayTag mode.");
@@ -1313,7 +1324,8 @@ namespace TFModFortRiseAiPython
     private static LevelSystem getLevel(MatchConfig Config)
     {
       if (Config.mode == GameModes.LastManStanding || Config.mode == GameModes.HeadHunters
-          || Config.mode == GameModes.TeamDeathmatch || Config.mode == GameModes.PlayTag)
+          || Config.mode == GameModes.TeamDeathmatch || Config.mode == GameModes.PlayTag
+          || Config.mode == GameModes.Respawn)
       {
         if (Config.randomLevel)
         {

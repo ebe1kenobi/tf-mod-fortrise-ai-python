@@ -191,15 +191,15 @@ class TowerFallTraining:
     if self.verbose > 0:
       log_fn(message)
 
-  def send_rematch(self):
-    logging.info('send_rematch')
-    response = self.send_request_json(dict(type='rematch'))
-    # logging.info('response = '+ str(response))
-    # if response['type'] != 'result':
-    #   raise TowerfallError(f'Unexpected response type: {response["type"]}')
-    # if not response['success']:
-    #   raise TowerfallError(f'Failed to send rematch message. Port: {self.port}, Response: {response["message"]}')
+  # def send_rematch(self):
+  #   logging.info('send_rematch')
+  #   response = self.send_request_json(dict(type='rematch'))
+  #   # logging.info('response = '+ str(response))
+  #   # if response['type'] != 'result':
+  #   #   raise TowerfallError(f'Unexpected response type: {response["type"]}')
+  #   # if not response['success']:
+  #   #   raise TowerfallError(f'Failed to send rematch message. Port: {self.port}, Response: {response["message"]}')
 
-    # Keep only the agent authorized by the Game
-    logging.info('Rematch ongoing, waiting scenario')
+  #   # Keep only the agent authorized by the Game
+  #   logging.info('Rematch ongoing, waiting scenario')
 

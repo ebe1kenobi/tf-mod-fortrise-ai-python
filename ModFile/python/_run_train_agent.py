@@ -57,7 +57,9 @@ i = 0
 while True:
   i += 1
   print(f"while True: {i}")
+  print(f"before learn: {i}")
   model.learn(total_timesteps=2000)
+  print(f"after learn: {i}")
   model.save(f"{model_path}{model_name}.{timestamp}.{env.total_game}.{env.total_step}.{env.game_reward}.zip")
   model.save(last)
   if i == 2:

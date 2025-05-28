@@ -114,6 +114,7 @@ namespace TFModFortRiseAiPython
           SetPlayerControl();
         }
 
+        Logger.Info("*****LoaderAIImport.addAgent");
         LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents, false);
         agentAdded = true;
       }

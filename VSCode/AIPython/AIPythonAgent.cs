@@ -43,17 +43,33 @@ namespace TFModFortRiseAiPython
 
     public override void Move()
     {
+      Logger.Info("AIpython.Move()");
       //lock (AIPython._lockSend)
       {
         if (AIPython.serializedStateUpdate == "") return;
+      //Logger.Info("1");
         //save screen image
         //SavePreviewPng();  //TODO move at the end of the game 
         AIPython.Write(AIPython.serializedStateUpdate, stream);
+      //Logger.Info("2");
         Message message = AIPython.Read(stream);
+      //Logger.Info("3");
+        //if (message.type == null) // ???
+        //{
+        //  return;
+        //}
+        //if (message.type == "result") // ???
+        //{
+        //  return;
+        //}
+        //return;
         if (message.rematch) { // Yes I know, pretty ugly :)
+      //Logger.Info("4");
           AIPython.Rematch = true;
         }
+      //Logger.Info("5");
         UpdateGameInput(message.actions);
+      //Logger.Info("6");
       }
     }
 

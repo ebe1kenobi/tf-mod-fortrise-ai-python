@@ -1,6 +1,7 @@
 ﻿using System;
 using FortRise;
 using MonoMod.ModInterop;
+using TFModFortRiseLoaderAI;
 
 //todo on level end -> restart session with same
 //send end message-> win
@@ -14,6 +15,7 @@ namespace TFModFortRiseAiPython
     public static TFModFortRiseAiPythonModule Instance;
     public static bool EightPlayerMod;
     public static bool PlayTagMod;
+    public static bool EightPlayerMod2;
 
     public override Type SettingsType => typeof(TFModFortRiseAiPythonSettings);
     public static TFModFortRiseAiPythonSettings Settings => (TFModFortRiseAiPythonSettings)Instance.InternalSettings;
@@ -44,6 +46,7 @@ namespace TFModFortRiseAiPython
       MyPlayer.Load();
 
       typeof(LoaderAIImport).ModInterop();
+      typeof(EigthPlayerImport).ModInterop();
       typeof(EigthPlayerImport).ModInterop();
       typeof(PlayTagImport).ModInterop();
 

@@ -35,7 +35,8 @@ class Agent:
     '''
     Handles a game message.
     '''
-    #logging.info('agent.act')
+    logging.info('agent.act')
+    logging.info(game_state['type'])
 
     if game_state['type'] == 'notplaying':
       #logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
@@ -72,7 +73,7 @@ class Agent:
       return True
 
     if game_state['type'] == 'update':
-      # logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
       # logging.info(str(game_state))
       # 'update' informs the state of entities in the map (players, arrows, enemies, etc).
       self.state_update = game_state
@@ -104,7 +105,7 @@ class Agent:
     self.pressed.add(b)
 
   def send_actions(self):
-    # logging.info('agent.send_actions ' + str(dict(
+    # logging.info('agent.send_actions =' + str(dict(
     #   type = 'actions',
     #   actions = ''.join(self.pressed),
     #   rematch = self.rematch,

@@ -8,7 +8,7 @@ import time
 
 class TowerFallEnv(gym.Env):
     def __init__(self, agent, game_state):
-        # logging.info('__init__***************************')
+        logging.info('__init__***************************')
         super(TowerFallEnv, self).__init__()
 
         self.agent = agent
@@ -31,12 +31,12 @@ class TowerFallEnv(gym.Env):
         self.total_game = 0
         self.game_reward = 0
 
-        self.step = "left"
+        # self.step = "left"
 
         # Définition des actions possibles ([0 Gauche 1 Droite 2 rien ], [0 haut 1 bas 2 rien ], 0 Saut 1 rien, 0 Tir 1 rien, 0 Dash 1 rien, 0 Dash 1 rien)
 
-        if self.step == "left":
-            self.action_space = gym.spaces.MultiDiscrete([3, 3, 2, 2, 2])
+        # if self.step == "left":
+        self.action_space = gym.spaces.MultiDiscrete([3, 3, 2, 2, 2])
 
         # self.action_space = gym.spaces.MultiDiscrete([3, 3, 2, 2, 2])
 
@@ -81,6 +81,7 @@ class TowerFallEnv(gym.Env):
         self.agent.send_actions()
 
     def _get_player_state(self, state):
+        # logging.info('_get_player_state***************************')
         if state == 'normal':
             return 0
         if state == 'ledgeGrab':
@@ -96,6 +97,7 @@ class TowerFallEnv(gym.Env):
         return 0
 
     def _get_arrow_state(self, state):
+        # logging.info('_get_arrow_state***************************')
         if state == 'shooting':
             return 0
         if state == 'drilling':
@@ -119,14 +121,19 @@ class TowerFallEnv(gym.Env):
         self.previous_game_state = self.game_state
 
         if not self.first:
+            # logging.info('not first***************************')
             self.game_state = self.agent.connection.read_json()
+            # logging.info(f'{self.game_state}')
             # self.agent.state_update = self.game_state
             # self.agent.update_state_scenario_with_new_data()
             # self.game_state = self.agent.state_update
 
         self.first = False
 
+        # logging.info('init_info 1**************************')
         self.init_info()
+        # logging.info('init_info 2***************************')
+
         # player_x, player_y, player_vx, player_vy, player_nb_arrow, player_on_ground, player_on_wall, player_state, player_facing, player_aimDirectionX, player_aimDirectionY = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         # enemy1_x, enemy1_y, enemy1_vx, enemy1_vy, enemy1_nb_arrow, enemy1_on_ground, enemy1_on_wall, enemy1_state, enemy1_facing, enemy1_aimDirectionX, enemy1_aimDirectionY = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         # enemy2_x, enemy2_y, enemy2_vx, enemy2_vy, enemy2_nb_arrow, enemy2_on_ground, enemy2_on_wall, enemy2_state, enemy2_facing, enemy2_aimDirectionX, enemy2_aimDirectionY = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -158,6 +165,7 @@ class TowerFallEnv(gym.Env):
 
         # Extraction des infos du joueur
         player = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.player_index), None)
+        # logging.info(' player = next')
         if player:
             self.info["player_x"] = player["pos"]["x"]
             self.info["player_y"] = player["pos"]["y"]
@@ -172,6 +180,7 @@ class TowerFallEnv(gym.Env):
             self.info["player_aimDirectionY"] = player["aimDirection"]["y"]
 
         enemy1 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy1_index), None)
+        # logging.info(' enemy1 = next')
         if enemy1:
             self.info["enemy1_x"] = enemy1["pos"]["x"]
             self.info["enemy1_y"] = enemy1["pos"]["y"]
@@ -186,6 +195,7 @@ class TowerFallEnv(gym.Env):
             self.info["enemy1_aimDirectionY"] = enemy1["aimDirection"]["y"]
 
         enemy2 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy2_index), None)
+        # logging.info(' enemy2 = next')
         if enemy2:
             self.info["enemy2_x"] = enemy2["pos"]["x"]
             self.info["enemy2_y"] = enemy2["pos"]["y"]
@@ -200,6 +210,7 @@ class TowerFallEnv(gym.Env):
             self.info["enemy2_aimDirectionY"] = enemy2["aimDirection"]["y"]
 
         enemy3 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy3_index), None)
+        # logging.info(' enemy3 = next')
         if enemy3:
             self.info["enemy3_x"] = enemy3["pos"]["x"]
             self.info["enemy3_y"] = enemy3["pos"]["y"]
@@ -214,11 +225,13 @@ class TowerFallEnv(gym.Env):
             self.info["enemy3_aimDirectionY"] = enemy3["aimDirection"]["y"]
 
         # Extraction des flèches en vol
+        # logging.info(' for i, arrow in enumerate')
         for i, arrow in enumerate((e for e in self.game_state["entities"] if e["type"] == "arrow"), start=1):
             self.info[f"arrow{i}_x"] =  arrow["pos"]["x"]
             self.info[f"arrow{i}_y"] =  arrow["pos"]["y"]
             self.info[f"arrow{i}_vx"] = arrow["vel"]["x"]
             self.info[f"arrow{i}_vy"] = arrow["vel"]["y"]
+        # logging.info(' after for')
 
         # todo "left":11.5945253,"right":308.4055
 
@@ -278,6 +291,7 @@ class TowerFallEnv(gym.Env):
         # logging.info(str(level))
         # logging.info('getgamestate : ***********level.flatten()****************')
         # logging.info(str(level.flatten()))
+        # logging.info("np.concatenate")
         return np.concatenate([
             level.flatten(),
             np.array(
@@ -372,7 +386,7 @@ class TowerFallEnv(gym.Env):
 
     # step 1
     # def _calculate_reward_step1(self, state_json):
-    #     # logging.info('_calculate_reward***************************')
+        # logging.info('_calculate_reward***************************')
 
     #     #  TODO if arrow no speed -> not a catch, check arrow.state
     #     # si bouge pas minus
@@ -380,6 +394,7 @@ class TowerFallEnv(gym.Env):
     #     # todo remplir les case avec ds solid si patforme!!
 
     def _calculate_reward(self, state_json):
+        # logging.info('st_calculate_rewardep***************************')
         reward = 0
 
         player = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.player_index), None)
@@ -534,11 +549,12 @@ class TowerFallEnv(gym.Env):
                 break
 
 
-        # logging.info(f'ok fin reset match restart with new data game_state == {self.game_state['type']}')
+        logging.info(f'ok fin reset match restart with new data game_state == {self.game_state['type']} {self.game_state}')
         self.first = True
         return self._get_game_state(), {}
 
     def init_info(self):
+        # logging.info(f'init_info')
         self.info["player_x"] = 0
         self.info["player_y"] = 0
         self.info["player_vx"] = 0

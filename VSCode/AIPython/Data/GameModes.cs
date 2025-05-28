@@ -10,5 +10,6 @@
     public static string Warlord = "Warlord";
     public static string Sandbox = "sandbox";
     public static string PlayTag = "PlayTag";
+    public static string Respawn = "Respawn";
   }
 }
