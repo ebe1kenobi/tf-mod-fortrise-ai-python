@@ -43,7 +43,7 @@ namespace TFModFortRiseAiPython
 
     public override void Move()
     {
-      Logger.Info("AIpython.Move()");
+      //Logger.Info("AIpython.Move()");
       //lock (AIPython._lockSend)
       {
         if (AIPython.serializedStateUpdate == "") return;

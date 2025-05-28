@@ -25,7 +25,7 @@ namespace TFModFortRiseAiPython
     public static void Update_patch(On.TowerFall.MapScene.orig_Update orig, global::TowerFall.MapScene self)
     {
       orig(self);
-      //SaveData.Instance.Options.ReplayMode = Options.ReplayModes.Off;
+      SaveData.Instance.Options.ReplayMode = Options.ReplayModes.Off; //todo ? 
       if (AIPython.Training) {
         //self.Selection = self.Buttons[1];
         //self.Selection = self.Buttons[3]; //random -> problem

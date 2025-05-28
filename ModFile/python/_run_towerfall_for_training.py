@@ -5,15 +5,15 @@ def main():
   towerfall = Towerfall(
     verbose = 0,
     config = dict(
-      # matchLengths='Instant', #Instant Quick Standard Epic
-      matchLengths='Epic',
+      matchLengths='Epic', #Instant Quick Standard Epic
+      # matchLengths='Epic',
       mode='HeadHunters', #Quest, DarkWorld, Trials, LastManStanding, HeadHunters, TeamDeathmatch, PlayTag( not supported = Warlord)
       # mode='Respawn',
       level=1,
       subLevel=0,
       noTreasure=True,
       noHazards=True,
-      speed=10,
+      speed=1,
       # speed=1,
       training=True,
       # training=False,

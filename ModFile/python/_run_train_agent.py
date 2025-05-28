@@ -62,8 +62,8 @@ while True:
   print(f"after learn: {i}")
   model.save(f"{model_path}{model_name}.{timestamp}.{env.total_game}.{env.total_step}.{env.game_reward}.zip")
   model.save(last)
-  if i == 2:
-    break
+  # if i == 2:
+    # break
   # time.sleep(2)
         # total_timesteps = 0
 

@@ -951,11 +951,11 @@ namespace TFModFortRiseAiPython
           }
 
           rawMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-          Logger.Info("rawMessage");
-          Logger.Info(rawMessage);
+          //Logger.Info("rawMessage");
+          //Logger.Info(rawMessage);
           break;
         }
-        Logger.Info("rawMessage = " + rawMessage);
+        //Logger.Info("rawMessage = " + rawMessage);
         Message message = JsonConvert.DeserializeObject<Message>(rawMessage);
         return message;
       }
@@ -1182,12 +1182,12 @@ namespace TFModFortRiseAiPython
         matchSettings = new MatchSettings(levelSystem, Modes.LastManStanding, matchLength);
         matchSettings.Variants.TournamentRules();
       }
-      else if (Config.mode == GameModes.Respawn)
-      {
-        Logger.Info("Configuring Respawn mode.");
-        matchSettings = new MatchSettings(levelSystem, ModRegisters.GameModeType<Respawn>(), matchLength);
-        matchSettings.Variants.TournamentRules();
-      }
+      //else if (Config.mode == GameModes.Respawn) //don't work ... round logic don 't exists error
+      //{
+      //  Logger.Info("Configuring Respawn mode.");
+      //  matchSettings = new MatchSettings(levelSystem, ModRegisters.GameModeType<Respawn>(), matchLength);
+      //  matchSettings.Variants.TournamentRules();
+      //}
       //else if (TFModFortRiseAIModule.IsModPlaytagExists && Config.mode == GameModes.PlayTag)
       //{
       //  Logger.Info("Configuring PlayTag mode.");

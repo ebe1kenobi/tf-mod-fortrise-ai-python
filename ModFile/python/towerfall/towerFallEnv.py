@@ -411,22 +411,22 @@ class TowerFallEnv(gym.Env):
             reward -= 5
 
         if player:
-            if player["catchArrow"]:
-                logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} catchArrow")
-                reward += 5
+            # if player["catchArrow"]:
+            #     logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} catchArrow")
+            #     reward += 5
 
-            if player["stealArrow"]:
-                logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} stealArrow")
-                reward += 2
+            # if player["stealArrow"]:
+            #     logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} stealArrow")
+            #     reward += 2
 
             if player["dead"]:
                 logging.info(f"PREWARD -5 player {player['playerIndex'] + 1} is dead (archer) by killer {player['killer']}")
                 player_dead = True
                 reward -= 5
-            else:
-                if len(previous_player["arrows"]) < len(player["arrows"]):
-                    logging.info(f"PREWARD +0.1 player")
-                    reward += 0.1
+            # else:
+            #     if len(previous_player["arrows"]) < len(player["arrows"]):
+            #         logging.info(f"PREWARD +0.1 player")
+            #         reward += 0.1
         else:
             player_dead = True
             reward -= 5
@@ -442,6 +442,34 @@ class TowerFallEnv(gym.Env):
         if enemy1:
             if enemy1["dead"] and enemy1["killer"] == self.player_index:
                 logging.info(f"PREWARD 10 enemy {enemy1['playerIndex'] + 1} is dead (archer) by killer {enemy1['killer']}")
+                player_kill = True
+                reward += 10
+
+        enemycorpse2 = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.enemy2_index), None)
+        if enemycorpse2:
+            if enemycorpse2["killer"] == self.player_index:
+                logging.info(f"PREWARD 10 enemy {enemycorpse2['playerIndex'] + 1} is dead (playerCorpse) by killer {enemycorpse2['killer']}")
+                player_kill = True
+                reward += 10
+
+        enemy2 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy2_index), None)
+        if enemy2:
+            if enemy2["dead"] and enemy2["killer"] == self.player_index:
+                logging.info(f"PREWARD 10 enemy {enemy2['playerIndex'] + 1} is dead (archer) by killer {enemy2['killer']}")
+                player_kill = True
+                reward += 10
+
+        enemycorpse3 = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.enemy3_index), None)
+        if enemycorpse3:
+            if enemycorpse3["killer"] == self.player_index:
+                logging.info(f"PREWARD 10 enemy {enemycorpse3['playerIndex'] + 1} is dead (playerCorpse) by killer {enemycorpse3['killer']}")
+                player_kill = True
+                reward += 10
+
+        enemy3 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy3_index), None)
+        if enemy3:
+            if enemy3["dead"] and enemy3["killer"] == self.player_index:
+                logging.info(f"PREWARD 10 enemy {enemy3['playerIndex'] + 1} is dead (archer) by killer {enemy3['killer']}")
                 player_kill = True
                 reward += 10
 
@@ -496,12 +524,12 @@ class TowerFallEnv(gym.Env):
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
                     logging.info(f"PDEAD player {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
-                    return True
+                    # return True
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy1_index:
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
-                return True
+                # return True
 
 
                 # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
@@ -510,12 +538,40 @@ class TowerFallEnv(gym.Env):
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
                     logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
-                    return True
+                    # return True
 
 
 
-        # if nbPlayer < 2:
-        #     return True
+            if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy2_index:
+                # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
+                logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                # return True
+
+
+                # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
+            if entity['type'] == 'archer' and entity['playerIndex'] == self.enemy2_index:
+                nbPlayer += 1
+                # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
+                if entity['dead'] == True:
+                    logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    # return True
+
+            if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy3_index:
+                # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
+                logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                # return True
+
+
+                # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
+            if entity['type'] == 'archer' and entity['playerIndex'] == self.enemy3_index:
+                nbPlayer += 1
+                # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
+                if entity['dead'] == True:
+                    logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    # return True
+
+        if nbPlayer < 2:
+            return True
 
         return False
         # return self.game_state['state'] == 'dying'
