@@ -5,6 +5,7 @@ from .simple_agent_level0 import SimpleAgentLevel0
 from .simple_agent_level1 import SimpleAgentLevel1
 from .training_agent import TrainingAgent
 from .jimmy import Jimmy
+from .training_agent2 import TrainingAgent2
 
 __all__ = [
   'Agent',
@@ -14,4 +15,5 @@ __all__ = [
   'SimpleAgentLevel1',
   'TrainingAgent',
   'Jimmy',
+  'TrainingAgent2',
 ]

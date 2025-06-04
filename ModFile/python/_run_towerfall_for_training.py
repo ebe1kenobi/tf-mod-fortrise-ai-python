@@ -9,11 +9,11 @@ def main():
       # matchLengths='Epic',
       mode='HeadHunters', #Quest, DarkWorld, Trials, LastManStanding, HeadHunters, TeamDeathmatch, PlayTag( not supported = Warlord)
       # mode='Respawn',
-      level=1,
-      subLevel=0,
+      level=0,
+      subLevel=1,
       noTreasure=True,
       noHazards=True,
-      speed=1,
+      speed=10,
       # speed=1,
       training=True,
       # training=False,
@@ -32,7 +32,6 @@ def main():
         dict(type='remote'), # ai
         dict(type='remote'), # ai
         dict(type='remote'), # IA to train, will connect after
-
       ],
       agents=[
         # dict(archer='white', ai='NoMoveAgent'),
@@ -42,6 +41,7 @@ def main():
         dict(archer='white', ai='SimpleAgentLevel1'),
         dict(archer='orange', ai='SimpleAgentLevel1'),
         dict(archer='purple', ai='SimpleAgentLevel1'),
+        dict(archer='purple', ai='TrainingAgent2'),
 
         # dict(archer='red', ai='NoMoveAgent'),
         # dict(archer='red', ai='Jimmy'),

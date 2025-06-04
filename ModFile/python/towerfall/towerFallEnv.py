@@ -49,7 +49,7 @@ class TowerFallEnv(gym.Env):
 
     def _send_action(self, action):
         """Envoie une action au jeu."""
-        # logging.info('_send_action***************************')
+        logging.info('_send_action***************************')
         # [2 1 0 0 1]
         # logging.info(str(action))
         #todo end action to agent
@@ -116,12 +116,15 @@ class TowerFallEnv(gym.Env):
 
     def _get_game_state(self):
         """Récupère et traite le JSON de l’état du jeu."""
-        # logging.info('_get_game_state***************************')
+        logging.info('_get_game_state***************************')
         #todo get agent state
         self.previous_game_state = self.game_state
 
+        # if not 'entities' in self.game_state:
+        #     return []
+
         if not self.first:
-            # logging.info('not first***************************')
+            logging.info('not first***************************')
             self.game_state = self.agent.connection.read_json()
             # logging.info(f'{self.game_state}')
             # self.agent.state_update = self.game_state
@@ -287,7 +290,72 @@ class TowerFallEnv(gym.Env):
         # logging.info('getgamestate : ***********grid****************')
         # logging.info(str(self.agent.state_scenario['grid']))
         # logging.info('getgamestate : ***********level****************')
-        level = np.array(self.agent.state_scenario['grid'], dtype=np.float32)
+
+        scenario = self.agent.state_scenario['grid']
+        # logging.info(str(scenario))
+        # [[1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1]]
+
+# game_state == update {'entities': [{'playerIndex': 1, 'killer': 3, 'pos': {'x': 124.0, 'y': 14.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16167, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'playerCorpse'}, {'playerIndex': 2, 'killer': 3, 'pos': {'x': 37.9916649, 'y': 34.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16169, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'playerCorpse'}, {'playerIndex': 3, 'killer': 0, 'pos': {'x': 243.885834, 'y': 24.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16171, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'playerCorpse'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 150.68219, 'y': 121.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16168, 'state': 'layingOnGround', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 309.0, 'y': 81.51178}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16124, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 242.908554, 'y': 23.3629}, 'vel': {'x': 44.0, 'y': -13.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16170, 'state': 'buried', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'arrow'}, {'playerIndex': 0, 'shield': False, 'wing': False, 'arrows': ['normal', 'normal', 'normal', 'normal'], 'dead': False, 'killer': -1, 'catchArrow': False, 'stealArrow': False, 'onGround': True, 'onWall': False, 'aimDirection': {'x': -1.0, 'y': 8.742278e-08}, 'team': 'neutral', 'dodgeCooldown': False, 'playTagOn': False, 'playTag': False, 'pos': {'x': 44.0, 'y': 27.0000153}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 14.0}, 'id': 16158, 'state': 'normal', 'isEnemy': False, 'canHurt': True, 'canBounceOn': False, 'isDead': False, 'facing': -1, 'type': 'archer'}, {'pos': {'x': 130.0, 'y': 75.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16162, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'crackedPlatform'}, {'pos': {'x': 190.0, 'y': 75.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16163, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'crackedPlatform'}, {'pos': {'x': 70.0, 'y': 175.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16164, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'crackedPlatform'}, {'pos': {'x': 250.0, 'y': 175.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16165, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'crackedPlatform'}, {'pos': {'x': 160.0, 'y': 165.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 60.0, 'y': 10.0}, 'id': 16166, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type': 'crackedPlatform'}], 'dt': 1.85568, 'id': 320708, 'type': 'update'}
+
+# game_state == update {'entities': [{'playerIndex': 1, 'killer': 3, 'pos': {'x': 124.0, 'y': 14.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16167, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'playerCorpse'}, {'playerIndex': 2, 'killer': 3, 'pos': {'x': 37.9916649, 'y': 34.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16169, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'playerCorpse'}, {'playerIndex': 3, 'killer': 0, 'pos': {'x': 243.885834, 'y': 24.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 8.0}, 'id': 16171, 'state': None, 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'playerCorpse'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 150.68219, 'y': 121.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16168, 'state': 'layingOnGround', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'arrow'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 309.0, 'y': 81.51178}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16124, 'state': 'stuck', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'arrow'}, {'arrowType': 'normal', 'timeLeft': 0.0, 'pos': {'x': 242.908554, 'y': 23.3629}, 'vel': {'x': 44.0, 'y': -13.0}, 'size': {'x': 2.0, 'y': 2.0}, 'id': 16170, 'state': 'buried', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'arrow'}, {'playerIndex': 0, 'shield': False, 'wing': False, 'arrows': ['normal', 'normal', 'normal', 'normal'], 'dead': False, 'killer': -1, 'catchArrow': False, 'stealArrow': False, 'onGround': True, 'onWall': False, 'aimDirection': {'x': -1.0, 'y': 8.742278e-08}, 'team': 'neutral', 'dodgeCooldown': False, 'playTagOn': False, 'playTag': False, 'pos': {'x': 44.0, 'y': 27.0000153}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 8.0, 'y': 14.0}, 'id': 16158, 'state': 'normal', 'isEnemy': False, 'canHurt': True, 'canBounceOn': False, 'isDead': False, 'facing': -1, 'type'
+# : 'archer'}, {'pos': {'x': 130.0, 'y': 75.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16162, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'crackedPlatform'}, {'pos': {'x': 190.0, 'y': 75.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16163, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'crackedPlatform'}, {'pos': {'x': 70.0, 'y': 175.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16164, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'crackedPlatform'}, {'pos': {'x': 250.0, 'y': 175.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 40.0, 'y': 10.0}, 'id': 16165, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'crackedPlatform'}, {'pos': {'x': 160.0, 'y': 165.0}, 'vel': {'x': 0.0, 'y': 0.0}, 'size': {'x': 60.0, 'y': 10.0}, 'id': 16166, 'state': 'waiting', 'isEnemy': False, 'canHurt': False, 'canBounceOn': False, 'isDead': False, 'facing': 0, 'type'
+# : 'crackedPlatform'}], 'dt': 1.85568, 'id': 320708, 'type'
+# : 'update'}
+
+        # TODO add entity type
+        # JumpPad
+        # LevelEntity ?
+        # CrumbleBlock
+        # RotatePlatform
+        # LoopPlatform
+        # ProximityBlock
+        # MoonGlassBlock
+        # ShiftBlock
+        # SwitchBlock
+        # MovingPlatform
+        # CrackedWall
+        # CrackedPlatform
+        # LevelTiles
+        # CrumbleBlock
+        # CrumbleWall
+        # CrumbleWallChunk
+        # for entity in self.agent.game_state['entities']
+        #     if type in _____
+        #         x = entity.pos.x //10
+        #         y = entity.pos.y //10
+        #         scenario[x,y] = 1
+
+        # logging.info(str(self.agent.state_scenario['grid']))
+        # logging.info("avant")
+        # id_avant = id(scenario)
+        # logging.info(str(id_avant))
+
+        # logging.info("Avant maj_scenario_avec_platforms:")
+        # logging.info("\n" + print_scenario(scenario, y_start=16, y_end=18, x_start=16, x_end=23))
+        # logging.info("\n" + self.print_scenario(scenario))
+
+        # scenario =
+        # self.maj_scenario_avec_platforms(scenario, self.game_state["entities"])
+        # id_apres = id(scenario)
+        # logging.info("apres")
+        # logging.info(str(id_apres))
+
+        # logging.info("Après maj_scenario_avec_platforms:")
+        # logging.info("\n" + print_scenario(scenario, y_start=16, y_end=18, x_start=16, x_end=23))
+        # logging.info("\n" + self.print_scenario(scenario))
+
+        level = np.array(scenario, dtype=np.float32)
+
         # logging.info(str(level))
         # logging.info('getgamestate : ***********level.flatten()****************')
         # logging.info(str(level.flatten()))
@@ -369,9 +437,53 @@ class TowerFallEnv(gym.Env):
             )
         # return np.array([1], dtype=np.float32)
 
+    def print_scenario(self, scenario, y_start=0, y_end=None, x_start=0, x_end=None):
+        """
+        Affiche une portion du tableau `scenario` avec '.' pour 0 et '#' pour 1.
+        Par défaut affiche tout. Tu peux spécifier une zone avec y_start/y_end et x_start/x_end.
+        """
+        y_end = y_end if y_end is not None else len(scenario[0])
+        x_end = x_end if x_end is not None else len(scenario)
+        lines = []
+        for y in range(y_start, y_end):
+            line = ''.join('#' if scenario[x][y] else '.' for x in range(x_start, x_end))
+            lines.append(line)
+
+
+        return '\n'.join(lines)
+
+    def maj_scenario_avec_platforms(self, scenario, entities):
+        for entity in entities:
+            logging.info(f'{entity.get('type')}')
+            pos = entity['pos']
+            size = entity['size']
+            logging.info(f'{pos['x']} {size['x']} / {pos['y']} {size['y']}')
+            if entity.get('type') == 'crackedPlatform':
+
+                logging.info(f'ok {entity.get('type')}')
+
+                # Conversion position/size en indices du tableau (10px par case)
+                x_start = int(pos['x'] // 10)
+                y_start = int(pos['y'] // 10)
+                x_end = int((pos['x'] + size['x']) // 10)
+                y_end = int((pos['y'] + size['y']) // 10)
+
+                logging.info(f'x_start={x_start} y_start={y_start} x_end={x_end} y_end={y_end}')
+
+                # Mise à jour du tableau
+                for y in range(y_start, y_end + 1):
+                    if 0 <= y < len(scenario):
+                        for x in range(x_start, x_end + 1):
+                            if 0 <= x < len(scenario[0]):
+                                scenario[x][y] = 1
+                                logging.info(f'ok scenario[{x}][{y}] = 1')
+                # return scenario  # return scenario
+
+        # return scenario
+
     def step(self, action):
         """Envoie une action et récupère l’état suivant."""
-        # logging.info('step***************************')
+        logging.info('step***************************')
         self.total_step += 1
         self._send_action(action)
         obs = self._get_game_state()
@@ -394,7 +506,7 @@ class TowerFallEnv(gym.Env):
     #     # todo remplir les case avec ds solid si patforme!!
 
     def _calculate_reward(self, state_json):
-        # logging.info('st_calculate_rewardep***************************')
+        logging.info('st_calculate_rewardep***************************')
         reward = 0
 
         player = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.player_index), None)
@@ -524,7 +636,7 @@ class TowerFallEnv(gym.Env):
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
                     logging.info(f"PDEAD player {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
-                    # return True
+                    return True
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy1_index:
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
@@ -579,7 +691,7 @@ class TowerFallEnv(gym.Env):
 
     def reset(self, seed=None, **kwargs):
         """Réinitialise le jeu."""
-        # logging.info('reset***************************')
+        logging.info('reset***************************')
 
         # self.towerfall.send_rematch()
         self.total_game += 1
@@ -591,14 +703,18 @@ class TowerFallEnv(gym.Env):
             if False == self.agent.act(self.game_state):
                 self.agent.send_actions() # to not block
             self.agent.rematch = False
+
+            logging.info('self.agent.connection.read_json()')
+
             self.game_state = self.agent.connection.read_json()
+            logging.info('self.game_state received')
             if self.game_state['type'] == 'init':
                 game_restart += 1
             if self.game_state['type'] == 'scenario':
                 game_restart += 1
                 self.agent.state_scenario = self.game_state
 
-            # logging.info(f'game_restart={game_restart}')
+            logging.info(f'game_restart={game_restart}')
 
             if self.game_state['type'] == 'update' and game_restart == 2:
                 self.previous_game_state = self.game_state
@@ -610,7 +726,7 @@ class TowerFallEnv(gym.Env):
         return self._get_game_state(), {}
 
     def init_info(self):
-        # logging.info(f'init_info')
+        logging.info(f'init_info')
         self.info["player_x"] = 0
         self.info["player_y"] = 0
         self.info["player_vx"] = 0

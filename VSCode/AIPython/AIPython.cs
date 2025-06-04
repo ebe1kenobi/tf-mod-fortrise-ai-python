@@ -79,7 +79,7 @@ namespace TFModFortRiseAiPython
       "TowerFall.CatchShine",
       "TowerFall.TreasureChest",
       "TowerFall.BGSkeleton",
-      "TowerFall.JumpPad",
+      //"TowerFall.JumpPad",
       //"TowerFall.CrackedPlatform",
       "TowerFall.Spikeball",
       "TowerFall.OrbPickup",
@@ -107,7 +107,7 @@ namespace TFModFortRiseAiPython
       "TowerFall.SpeedBootsPickup",
       //"TowerFall.Miasma",
       "TowerFall.KingIntro",
-      "TowerFall.SwitchBlockControl",
+      //"TowerFall.SwitchBlockControl",
       //"TowerFall.SwitchBlock",
       "TowerFall.LevelEntity",
       //"TowerFall.ShiftBlock",
@@ -136,7 +136,7 @@ namespace TFModFortRiseAiPython
       //"TowerFall.FeatherArrow",
 "TowerFall.Prism",
 "TowerFall.PrismParticle",
-"TowerFall.CrumbleWallChunk",
+//"TowerFall.CrumbleWallChunk",
 "TowerFall.PrismVanish",
 "TowerFall.ShockCircle",
 
@@ -305,18 +305,34 @@ namespace TFModFortRiseAiPython
       stateScenario.mode = Training ? Config.mode : MainMenu.CurrentMatchSettings.Mode.ToString();
       //Logger.Info("3");
       stateScenario.grid = new int[xSize, ySize];
+        //Logger.Info("=== LEVEL MAP ===");
 
       for (int x = 0; x < xSize; x++)
       {
         for (int y = 0; y < ySize; y++)
         {
-          stateScenario.grid[x, ySize - y - 1] = level.Tiles.Grid[x, y] ? 1 : 0;
+          stateScenario.grid[x, y] = level.Tiles.Grid[x, y] ? 1 : 0;
+          //stateScenario.grid[x, ySize - y - 1] = level.Tiles.Grid[x, y] ? 1 : 0;
         }
       }
-      //Logger.Info("SerializeObject");
+
+      //Logger.Info("=== LEVEL MAP ===");
+      //string s = "";
+      //for (int y = 0; y < ySize; y++)
+      //{
+      //  s = "";
+      //  for (int x = 0; x < xSize; x++)
+      //  {
+      //    //Logger.Info(level.Tiles.Grid[x, y] ? "1" : "0");
+      //    s += level.Tiles.Grid[x, y] ? "1" : "0";
+      //  }
+      //  Logger.Info(s);
+      //}
+      //Logger.Info("=== END MAP ===");
 
       scenarioMessage = JsonConvert.SerializeObject(stateScenario);
       //Logger.Info("SerializeObject2");
+      //DebugPrintLevelMap();
 
       for (int i = 0; i < TFGame.Players.Length; i++) 
       {
@@ -335,6 +351,40 @@ namespace TFModFortRiseAiPython
       serializedStateUpdate = JsonConvert.SerializeObject(stateUpdate);
     }
 
+
+    //private void DebugPrintLevelMap()
+    //{
+    //  Logger.Info("=== LEVEL MAP ===");
+
+    //  // Créer une hitbox de 1x1 pour tester chaque pixel
+    //  WrapHitbox testHitbox = new WrapHitbox(1, 1);
+    //  Entity testEntity = new Entity(Vector2.Zero);
+    //  testEntity.Collider = testHitbox;
+
+    //  for (int y = 0; y < 240; y++)
+    //  {
+    //    string line = "";
+    //    for (int x = 0; x < 320; x++)
+    //    {
+    //      testEntity.Position = new Vector2(x, y);
+    //      bool isSolid = false;
+
+    //      foreach (Entity solid in base.Level[GameTags.Solid])
+    //      {
+    //        if (solid.Collider != null && testEntity.CollideCheck(solid))
+    //        {
+    //          isSolid = true;
+    //          break;
+    //        }
+    //      }
+
+    //      line += isSolid ? "1" : "0";
+    //    }
+    //    Logger.Info(line);
+    //  }
+
+    //  Logger.Info("=== END MAP ===");
+    //}
 
     static Dictionary<Type, Func<Entity, StateEntity>> getStateFunctions = new Dictionary<Type, Func<Entity, StateEntity>>() {
       { typeof(AmaranthBoss), ExtEntity.GetState}, // Investigate

@@ -13,7 +13,7 @@ towerfall = TowerFallTraining(
   config = dict(
     agentTimeout='24:00:00',
     agents=[
-      dict(archer='white', ai='TrainingAgent'),
+      dict(archer='blue', ai='TrainingAgent'),
     ],
   )
 )
