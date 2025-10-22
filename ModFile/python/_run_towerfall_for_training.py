@@ -23,15 +23,10 @@ def main():
       # nbHuman = 0, # number of human playing (used when Training=True only)
       #always set all the agent
       trainingPlayer=[
-        # dict(type='none'), # human MUST always be in the beginning of the array!
-        # dict(type='none'),
-        # dict(type='none'),
-        # dict(type='remote'), # IA to train, will connect after
-
         dict(type='remote'), # ai
         dict(type='remote'), # ai
         dict(type='remote'), # ai
-        dict(type='remote'), # IA to train, will connect after
+        dict(type='remote'), # IA to train
       ],
       agents=[
         # dict(archer='white', ai='NoMoveAgent'),

@@ -231,7 +231,7 @@ class Towerfall:
     self.open_connection.close()
 
   def _attain_game_port(self) -> int:
-    #logging.info("TowerFall._attain_game_port")
+    logging.info("TowerFall._attain_game_port")
     metadata = self._find_compatible_metadata()
 
     if not metadata:
@@ -257,6 +257,11 @@ class Towerfall:
     dirs = list(os.listdir(self.pool_path))
     random.shuffle(dirs)
     for file_name in os.listdir(self.pool_path):
+      logging.info(self.pool_path)
+      logging.info(file_name)
+      if file_name == "default":
+        continue
+
       try:
         pid = int(file_name)
         psutil.Process(pid)
