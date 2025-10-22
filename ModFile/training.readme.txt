@@ -1,2 +1,4 @@
 run TowerFallTraining.bat, it will execute towerfall.exe and connect the agent with _run_towerfall_for_training.py
 TrainingAgent2 is the agent TrainingAgent2
+
+use branch dev/training for tf-mod-fortrise-ai-python and tf-mod-fortrise-laoder-ai
