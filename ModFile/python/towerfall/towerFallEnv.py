@@ -8,7 +8,7 @@ import time
 
 class TowerFallEnv(gym.Env):
     def __init__(self, agent, game_state):
-        logging.info('__init__***************************')
+        # logging.info('__init__***************************')
         super(TowerFallEnv, self).__init__()
 
         self.agent = agent
@@ -22,10 +22,13 @@ class TowerFallEnv(gym.Env):
 
         self.first = True
         self.info = {}
-        self.player_index = 3
+        # self.player_index = 3
+        self.player_index = 1
         self.enemy1_index = 0
-        self.enemy2_index = 1
-        self.enemy3_index = 2
+        # self.enemy2_index = 1
+        self.enemy2_index = 9
+        # self.enemy3_index = 2
+        self.enemy3_index = 9
 
         self.total_step = 0
         self.total_game = 0
@@ -49,7 +52,7 @@ class TowerFallEnv(gym.Env):
 
     def _send_action(self, action):
         """Envoie une action au jeu."""
-        logging.info('_send_action***************************')
+        # logging.info('_send_action***************************')
         # [2 1 0 0 1]
         # logging.info(str(action))
         #todo end action to agent
@@ -116,7 +119,7 @@ class TowerFallEnv(gym.Env):
 
     def _get_game_state(self):
         """Récupère et traite le JSON de l’état du jeu."""
-        logging.info('_get_game_state***************************')
+        # logging.info('_get_game_state***************************')
         #todo get agent state
         self.previous_game_state = self.game_state
 
@@ -124,7 +127,7 @@ class TowerFallEnv(gym.Env):
         #     return []
 
         if not self.first:
-            logging.info('not first***************************')
+            # logging.info('not first***************************')
             self.game_state = self.agent.connection.read_json()
             # logging.info(f'{self.game_state}')
             # self.agent.state_update = self.game_state
@@ -483,7 +486,7 @@ class TowerFallEnv(gym.Env):
 
     def step(self, action):
         """Envoie une action et récupère l’état suivant."""
-        logging.info('step***************************')
+        # logging.info('step***************************')
         self.total_step += 1
         self._send_action(action)
         obs = self._get_game_state()
@@ -506,7 +509,7 @@ class TowerFallEnv(gym.Env):
     #     # todo remplir les case avec ds solid si patforme!!
 
     def _calculate_reward(self, state_json):
-        logging.info('st_calculate_rewardep***************************')
+        # logging.info('st_calculate_rewardep***************************')
         reward = 0
 
         player = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.player_index), None)
@@ -518,21 +521,21 @@ class TowerFallEnv(gym.Env):
 
         playercorpse = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.player_index), None)
         if playercorpse:
-            logging.info(f"PREWARD -5 player {playercorpse['playerIndex'] + 1} is dead (playerCorpse) by killer {playercorpse['killer']}")
+            logging.info(f"PREWARD -5 player {playercorpse['playerIndex']} is dead (playerCorpse) by killer {playercorpse['killer']}")
             player_dead = True
             reward -= 5
 
         if player:
             # if player["catchArrow"]:
-            #     logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} catchArrow")
+            #     logging.info(f"PREWARD +5 player {player['playerIndex']} catchArrow")
             #     reward += 5
 
             # if player["stealArrow"]:
-            #     logging.info(f"PREWARD +5 player {player['playerIndex'] + 1} stealArrow")
+            #     logging.info(f"PREWARD +5 player {player['playerIndex']} stealArrow")
             #     reward += 2
 
             if player["dead"]:
-                logging.info(f"PREWARD -5 player {player['playerIndex'] + 1} is dead (archer) by killer {player['killer']}")
+                logging.info(f"PREWARD -5 player {player['playerIndex']} is dead (archer) by killer {player['killer']}")
                 player_dead = True
                 reward -= 5
             # else:
@@ -546,42 +549,42 @@ class TowerFallEnv(gym.Env):
         enemycorpse1 = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.enemy1_index), None)
         if enemycorpse1:
             if enemycorpse1["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemycorpse1['playerIndex'] + 1} is dead (playerCorpse) by killer {enemycorpse1['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemycorpse1['playerIndex']} is dead (playerCorpse) by killer {enemycorpse1['killer']}")
                 player_kill = True
                 reward += 10
 
         enemy1 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy1_index), None)
         if enemy1:
             if enemy1["dead"] and enemy1["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemy1['playerIndex'] + 1} is dead (archer) by killer {enemy1['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemy1['playerIndex']} is dead (archer) by killer {enemy1['killer']}")
                 player_kill = True
                 reward += 10
 
         enemycorpse2 = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.enemy2_index), None)
         if enemycorpse2:
             if enemycorpse2["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemycorpse2['playerIndex'] + 1} is dead (playerCorpse) by killer {enemycorpse2['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemycorpse2['playerIndex']} is dead (playerCorpse) by killer {enemycorpse2['killer']}")
                 player_kill = True
                 reward += 10
 
         enemy2 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy2_index), None)
         if enemy2:
             if enemy2["dead"] and enemy2["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemy2['playerIndex'] + 1} is dead (archer) by killer {enemy2['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemy2['playerIndex']} is dead (archer) by killer {enemy2['killer']}")
                 player_kill = True
                 reward += 10
 
         enemycorpse3 = next((e for e in self.game_state["entities"] if e["type"] == "playerCorpse" and e["playerIndex"] == self.enemy3_index), None)
         if enemycorpse3:
             if enemycorpse3["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemycorpse3['playerIndex'] + 1} is dead (playerCorpse) by killer {enemycorpse3['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemycorpse3['playerIndex']} is dead (playerCorpse) by killer {enemycorpse3['killer']}")
                 player_kill = True
                 reward += 10
 
         enemy3 = next((e for e in self.game_state["entities"] if e["type"] == "archer" and e["playerIndex"] == self.enemy3_index), None)
         if enemy3:
             if enemy3["dead"] and enemy3["killer"] == self.player_index:
-                logging.info(f"PREWARD 10 enemy {enemy3['playerIndex'] + 1} is dead (archer) by killer {enemy3['killer']}")
+                logging.info(f"PREWARD 10 enemy {enemy3['playerIndex']} is dead (archer) by killer {enemy3['killer']}")
                 player_kill = True
                 reward += 10
 
@@ -624,66 +627,85 @@ class TowerFallEnv(gym.Env):
         # if state[0] == 0 and state[1] == 0:  # Exemple : si le joueur a disparu
         #     return True
         nbPlayer = 0
+        archer = False
+        # logging.info(f"self.player_index: {self.player_index}")
         for entity in self.game_state['entities']:
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.player_index:
+                # logging.info(f"archer detecté corpse")
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
-                logging.info(f"PDEAD player {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                logging.info(f"PDEAD player {entity['playerIndex']} is dead (playerCorpse) by killer {entity['killer']}")
                 return True
 
             if entity['type'] == 'archer' and entity['playerIndex'] == self.player_index:
-                nbPlayer += 1
+                # nbPlayer += 1
+                # logging.info(f"archer detecté")
+                archer = True
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
-                    logging.info(f"PDEAD player {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    logging.info(f"PDEAD player {entity['playerIndex']} is dead (archer) by killer {entity['killer']}")
                     return True
+                else:
+                    nbPlayer += 1
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy1_index:
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
-                logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (playerCorpse) by killer {entity['killer']}")
                 # return True
 
 
                 # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
             if entity['type'] == 'archer' and entity['playerIndex'] == self.enemy1_index:
-                nbPlayer += 1
+                # nbPlayer += 1
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
-                    logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (archer) by killer {entity['killer']}")
                     # return True
+                else:
+                    nbPlayer += 1
 
 
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy2_index:
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
-                logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (playerCorpse) by killer {entity['killer']}")
                 # return True
 
 
                 # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
             if entity['type'] == 'archer' and entity['playerIndex'] == self.enemy2_index:
-                nbPlayer += 1
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
-                    logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (archer) by killer {entity['killer']}")
                     # return True
+                else:
+                    nbPlayer += 1
+
 
             if entity['type'] == 'playerCorpse' and entity['playerIndex'] == self.enemy3_index:
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
-                logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (playerCorpse) by killer {entity['killer']}")
+                logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (playerCorpse) by killer {entity['killer']}")
                 # return True
 
 
                 # return entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True
             if entity['type'] == 'archer' and entity['playerIndex'] == self.enemy3_index:
-                nbPlayer += 1
+                # nbPlayer += 1
                 # if entity['state'] == 'dying' or entity['dead'] == True or entity['isDead'] == True:
                 if entity['dead'] == True:
-                    logging.info(f"PDEAD enemy {entity['playerIndex'] + 1} is dead (archer) by killer {entity['killer']}")
+                    logging.info(f"PDEAD enemy {entity['playerIndex']} is dead (archer) by killer {entity['killer']}")
                     # return True
+                else:
+                    nbPlayer += 1
 
         if nbPlayer < 2:
             return True
+
+
+        # logging.info(f"nbPlayer: {nbPlayer} archer: {archer}  entity: {self.game_state['entities']}")
+
+        # if nbPlayer > 0 and archer == False:
+        #     return True
 
         return False
         # return self.game_state['state'] == 'dying'
@@ -691,7 +713,7 @@ class TowerFallEnv(gym.Env):
 
     def reset(self, seed=None, **kwargs):
         """Réinitialise le jeu."""
-        logging.info('reset***************************')
+        # logging.info('reset***************************')
 
         # self.towerfall.send_rematch()
         self.total_game += 1
@@ -704,17 +726,17 @@ class TowerFallEnv(gym.Env):
                 self.agent.send_actions() # to not block
             self.agent.rematch = False
 
-            logging.info('self.agent.connection.read_json()')
+            # logging.info('self.agent.connection.read_json()')
 
             self.game_state = self.agent.connection.read_json()
-            logging.info('self.game_state received')
+            # logging.info('self.game_state received')
             if self.game_state['type'] == 'init':
                 game_restart += 1
             if self.game_state['type'] == 'scenario':
                 game_restart += 1
                 self.agent.state_scenario = self.game_state
 
-            logging.info(f'game_restart={game_restart}')
+            # logging.info(f'game_restart={game_restart}')
 
             if self.game_state['type'] == 'update' and game_restart == 2:
                 self.previous_game_state = self.game_state
@@ -726,7 +748,7 @@ class TowerFallEnv(gym.Env):
         return self._get_game_state(), {}
 
     def init_info(self):
-        logging.info(f'init_info')
+        # logging.info(f'init_info')
         self.info["player_x"] = 0
         self.info["player_y"] = 0
         self.info["player_vx"] = 0

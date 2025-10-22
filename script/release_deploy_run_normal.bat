@@ -13,6 +13,8 @@ echo =================================
 echo =       EXECUTE TOWERFALL       =
 echo =================================
 
-%PYRGOS_EXE_PATH%
+c:
+cd %TOWERFALL_THIS_MODULE_PATH%%
+%EXECUTABLE_TRAINING_BAT%
 
 @REM pause

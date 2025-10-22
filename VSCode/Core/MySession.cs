@@ -35,6 +35,7 @@
         {
           Logger.Info("set NoMiasma");
           self.RoundLogic.CanMiasma = false;
+          MyLevel.sandboxEntityCreated = false;
         }
       }
     }

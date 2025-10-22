@@ -26,7 +26,7 @@ class TrainingAgent2(Agent):
 
 
   def __init__(self, id : id,  connection: towerfall.Connection):
-    logging.info(f'TrainingAgent2.__init__ {id}')
+    # logging.info(f'TrainingAgent2.__init__ {id}')
     self.counterStart = 0
     self.game_state = {}
     super().__init__(id, connection)
@@ -69,7 +69,7 @@ class TrainingAgent2(Agent):
       if i > 1:
         time.sleep(5)
         self.send_actions()
-      logging.info('self.connection.read_json()')
+      # logging.info('self.connection.read_json()')
       game_state = self.connection.read_json()
       # logging.info('towerfall.run : agent.act')
       self.model.learn(total_timesteps=2000)
@@ -78,9 +78,9 @@ class TrainingAgent2(Agent):
       self.model.save(self.last)
 
   def act(self, game_state: Mapping[str, Any]):
-    logging.info(f'TrainingAgent2.act  {self.id}')
+    # logging.info(f'TrainingAgent2.act  {self.id}')
     if not 'type' in game_state:
-      logging.info(f'return True  {self.id}')
+      # logging.info(f'return True  {self.id}')
       return True
     if False == super().act(game_state):
       self.send_actions()

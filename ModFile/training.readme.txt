@@ -2,3 +2,36 @@ run TowerFallTraining.bat, it will execute towerfall.exe and connect the agent w
 TrainingAgent2 is the agent TrainingAgent2
 
 use branch dev/training for tf-mod-fortrise-ai-python and tf-mod-fortrise-laoder-ai
+
+when training with 2 agent :
+
+--------------------------
+python TowerFallEnv
+changer
+        self.player_index = 3 <<< 1
+        self.enemy1_index = 0
+        self.enemy2_index = 1  <<<9
+        self.enemy3_index = 2  <<<<9
+
+
+--------------------------
+python config :
+nbAgents = 2,
+
+trainingPlayer=[
+dict(type='remote'), # ai
+dict(type='remote'), # IA to train
+],
+agents=[
+dict(archer='orange', ai='SimpleAgentLevel1'),
+dict(archer='purple', ai='TrainingAgent2'),
+],
+
+--------------------------
+c# MyLevel.Update_patch limit to 2 player
+        var player1 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        self.Add(player1);
+        playerIndex++;
+        var player2 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        self.Add(player2);
+        playerIndex++;

@@ -12,7 +12,7 @@ _TIMEOUT = 10
 
 class Agent:
   def __init__(self, id : id,  connection: Connection):
-    logging.info(f'agent.__init__ {id}')
+    # logging.info(f'agent.__init__ {id}')
     self.state_init: Mapping[str, Any] = {}
     self.state_scenario: Mapping[str, Any] = {}
     self.state_update: Mapping[str, Any] = {}
@@ -26,9 +26,9 @@ class Agent:
     # self.attack_achers = attack_archers
 
   def run(self):
-    logging.info(f'agent.run {self.id}')
+    # logging.info(f'agent.run {self.id}')
     while True:
-      logging.info(f'agent.run while True read_json {self.id}')
+      # logging.info(f'agent.run while True read_json {self.id}')
       game_state = self.connection.read_json()
       # logging.info('towerfall.run : agent.act')
       self.act(game_state)
@@ -37,8 +37,8 @@ class Agent:
     '''
     Handles a game message.
     '''
-    logging.info(f'agent.act {self.id}')
-    logging.info(game_state['type'])
+    # logging.info(f'agent.act {self.id}')
+    # logging.info(game_state['type'])
 
     if game_state['type'] == 'notplaying':
       #logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
@@ -63,7 +63,7 @@ class Agent:
 
     # Add game mode # AiMod.Config.mode == GameModes.Quest
     if game_state['type'] == 'scenario':
-      logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      # logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
       # 'scenario' informs your bot about the current state of the ground. Store this information
       # to use in all subsequent loops. (This example bot doesn't use the shape of the scenario)
       self.state_scenario = game_state
@@ -75,7 +75,7 @@ class Agent:
       return True
 
     if game_state['type'] == 'update':
-      logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
+      # logging.info(str(id) + ': game_state.type = ' + str(game_state['type']))
       # logging.info(str(game_state))
       # 'update' informs the state of entities in the map (players, arrows, enemies, etc).
       self.state_update = game_state
@@ -93,7 +93,7 @@ class Agent:
     # If the agent is not present, it means it is dead.
     if self.isDead():
       # You are required to reply with actions, or the agent will get disconnected.
-      logging.info('Agent.send_actions  player dead')
+      # logging.info('Agent.send_actions  player dead')
       self.send_actions()
       return True
 
@@ -107,12 +107,12 @@ class Agent:
     self.pressed.add(b)
 
   def send_actions(self):
-    logging.info(f'agent.send_actions {self.id} =' + str(dict(
-      type = 'actions',
-      actions = ''.join(self.pressed),
-      rematch = self.rematch,
-      id = self.state_update['id']
-    )))
+    # logging.info(f'agent.send_actions {self.id} =' + str(dict(
+    #   type = 'actions',
+    #   actions = ''.join(self.pressed),
+    #   rematch = self.rematch,
+    #   id = self.state_update['id']
+    # )))
     assert self.state_update
     self.connection.send_json(dict(
       type = 'actions',

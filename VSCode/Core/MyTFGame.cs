@@ -7,6 +7,7 @@ using TowerFall;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using TFModFortRiseLoaderAI;
+using System.Linq;
 //using System.Net.Sockets;
 //using System.Net;
 //using System.Text;
@@ -114,7 +115,36 @@ namespace TFModFortRiseAiPython
           SetPlayerControl();
         }
 
-        Logger.Info("*****LoaderAIImport.addAgent");
+        Logger.Info("*****LoaderAIImport.addAgent count= " + AIPython.agents.Count());
+        ///////////////////////////////////////////////////
+        int total = 0;
+        for (int i = 0; i < AIPython.agents.Length; i++)
+        {
+          Logger.Info($"agents key: {i} : " + (null == AIPython.agents[i]));
+          if ((null == AIPython.agents[i])) continue;
+          //cleanAgents[total] = agents[i];
+          total++;
+        }
+        AIPythonAgent[] cleanAgents = new AIPythonAgent[total];
+        total = 0;
+        for (int i = 0; i < AIPython.agents.Length; i++)
+        {
+          Logger.Info($"agents2 key: {i} : " + (null == AIPython.agents[i]));
+          if ((null == AIPython.agents[i])) continue;
+          cleanAgents[total] = AIPython.agents[i];
+          total++;
+        }
+        AIPython.agents = cleanAgents;
+        for (int i = 0; i < AIPython.agents.Length; i++)
+        {
+          Logger.Info($"cleanAgents key: {i}");
+        }
+
+        for (int i = 0; i < AIPython.agents.Length; i++)
+        {
+          Logger.Info($"agents key: {i}");
+        }
+        ///////////////////////////////////////////////////
         LoaderAIImport.addAgent(AIPython.AINAME, AIPython.agents, false);
         agentAdded = true;
       }

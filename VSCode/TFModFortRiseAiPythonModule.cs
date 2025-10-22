@@ -1,7 +1,7 @@
 ﻿using System;
 using FortRise;
+using System.Diagnostics;
 using MonoMod.ModInterop;
-using TFModFortRiseLoaderAI;
 
 //todo on level end -> restart session with same
 //send end message-> win
@@ -22,6 +22,10 @@ namespace TFModFortRiseAiPython
 
     public TFModFortRiseAiPythonModule()
     {
+      if (!Debugger.IsAttached)
+      {
+        //Debugger.Launch(); // Proposera d’attacher Visual Studio
+      }
       Instance = this;
       Logger.Init("TFModFortRiseAiPythonLOG");
     }

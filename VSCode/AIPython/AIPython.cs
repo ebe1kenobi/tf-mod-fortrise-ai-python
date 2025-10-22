@@ -1168,7 +1168,8 @@ namespace TFModFortRiseAiPython
       Logger.Info("Starting a new session.");
       CreateMatchSettings();
 
-      
+
+
       Session session = new Session(matchSettings);
       //var dynData = DynamicData.For(session);
       //dynData.Set("RoundIndex", 1);

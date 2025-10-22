@@ -1,10 +1,14 @@
-﻿using Monocle;
+﻿using IL.MonoMod;
+using Microsoft.Xna.Framework;
+using Monocle;
+using Newtonsoft.Json.Linq;
 
 namespace TFModFortRiseAiPython
 {
   public class MyLevel {
 
     public static int nbUpdate = 0;
+    public static bool sandboxEntityCreated = false;
 
     internal static void Load()
     {
@@ -21,6 +25,35 @@ namespace TFModFortRiseAiPython
 
 		public static void Update_patch(On.TowerFall.Level.orig_Update orig, global::TowerFall.Level self) {
       nbUpdate++;
+      if (AIPython.Config.mode == GameModes.Sandbox && !sandboxEntityCreated)
+      {
+        int playerIndex = 0;
+
+        //TODO create the number of player from the config!
+
+        //var player = EntityCreator.CreatePlayer(e, playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        var player1 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        self.Add(player1);
+        playerIndex++;
+        var player2 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        self.Add(player2);
+        playerIndex++;
+        //var player3 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        //self.Add(player3);
+        //playerIndex++;
+        //var player4 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        //self.Add(player4);
+        //playerIndex++;
+
+
+        //Entity entity = EntityCreator.CreateSlime(new JObject());
+        //self.Add(entity);
+
+        self.UpdateEntityLists();
+        MyLevel.sandboxEntityCreated = true;
+      }
+
+
       orig(self);
       if (AIPython.Training && AIPython.Config.speed > 1)
       {
