@@ -27,17 +27,22 @@ namespace TFModFortRiseAiPython
       nbUpdate++;
       if (AIPython.Config.mode == GameModes.Sandbox && !sandboxEntityCreated)
       {
-        int playerIndex = 0;
+        //int playerIndex = 0;
 
         //TODO create the number of player from the config!
 
         //var player = EntityCreator.CreatePlayer(e, playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
-        var player1 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
-        self.Add(player1);
-        playerIndex++;
-        var player2 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
-        self.Add(player2);
-        playerIndex++;
+        for (int i = 0; i < AIPython.Config.agents.Count; i++) {
+          var player1 = EntityCreator.CreatePlayer(i, self.Session.MatchSettings.GetPlayerAllegiance(i), AIPython.Config.agents[i].X, AIPython.Config.agents[i].Y);
+          self.Add(player1);
+        }
+
+        //var player1 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex), AIPython.Config.agents[playerIndex]X, AIPython.Config.agents[playerIndex].Y);
+        //self.Add(player1);
+        //playerIndex++;
+        //var player2 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
+        //self.Add(player2);
+        //playerIndex++;
         //var player3 = EntityCreator.CreatePlayer(playerIndex, self.Session.MatchSettings.GetPlayerAllegiance(playerIndex));
         //self.Add(player3);
         //playerIndex++;

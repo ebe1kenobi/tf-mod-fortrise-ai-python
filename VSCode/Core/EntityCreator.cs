@@ -24,10 +24,26 @@ namespace TFModFortRiseAiPython
       { "worm", CreateWorm },
     };
 
-    public static Player CreatePlayer(int playerIndex, Allegiance team) {
-    //public static Player CreatePlayer(JObject e, int playerIndex, Allegiance team) {
+    public static Player CreatePlayer(int playerIndex, Allegiance team, int X, int Y) {
+      //public static Player CreatePlayer(JObject e, int playerIndex, Allegiance team) {
       //var state = e.ToObject<StateEntity>();
-      Vector2 pos = new Vector2(50*playerIndex,50);
+      //Vector2 pos;
+      //for (int i = 0; i < AIPython.Config.agents.Count; i++) {
+      Vector2 pos = new Vector2(X, Y);
+
+    ////}
+    //  switch (playerIndex) {
+    //    case 0:
+    //      pos = new Vector2(AIPython.Config.agents[playerIndex].X, AIPython.Config.agents[playerIndex].Y); 
+    //      break;
+    //    case 1:
+    //      pos = new Vector2(AIPython.Config.agents[playerIndex].X, AIPython.Config.agents[playerIndex].Y);
+    //      break;
+    //    default:
+    //      pos = new Vector2(AIPython.Config.agents[1].X, AIPython.Config.agents[1].Y);
+    //      break;
+    //  }
+      //Vector2 pos = new Vector2(50*(playerIndex+1),50);
       //Vector2 pos = GetPos(state);
       var player = new Player(
         playerIndex,

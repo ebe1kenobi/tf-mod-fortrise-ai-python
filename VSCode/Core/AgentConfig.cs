@@ -19,9 +19,17 @@ namespace TFModFortRiseAiPython
     [DataMember(EmitDefaultValue = false)]
     public string archer;
 
+
+    [DataMember(EmitDefaultValue = false)]
+    public int X;
+
+
+    [DataMember(EmitDefaultValue = false)]
+    public int Y;
+
     public override String ToString()
     {
-      return "{team:" + team + ", archer:" + archer + "}";
+      return "{team:" + team + ", archer:" + archer + ", X:" + X + ", Y:" + Y + "}";
       //return "{type:" + type + ", team:" + team + ", archer:" + archer + "}";
     }
   }
