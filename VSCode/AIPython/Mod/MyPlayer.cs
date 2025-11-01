@@ -29,7 +29,7 @@ namespace TFModFortRiseAiPython
       AIPython.agents[self.PlayerIndex].deathCause = deathCause;
       AIPython.agents[self.PlayerIndex].killer = killerIndex;
       if (AIPython.Training) {
-        Logger.Info("player " + self.PlayerIndex + " dead");
+        Logger.Info("player " + self.PlayerIndex + " dead"); 
         AIPython.Update(self.Level);
         AIPython.agents[self.PlayerIndex].Move(); // send last state because Move() will not be called after this point when match end
       }

@@ -38,7 +38,6 @@ s= """11111111111111111111111111111111
 10000000000000000000000000000001
 10000000000000000000000000000001
 10000000000000000000000000000001
-10000000000000000000000100000001
 10000000000000000000000000000001
 10000000000000000000000000000001
 10000000000000000000000000000001
@@ -48,25 +47,30 @@ s= """11111111111111111111111111111111
 10000000000000000000000000000001
 10000000000000000000000000000001
 10000000000000000000000000000001
+10000000000000000000000000000011
 10000000000000000000000000000001
 10000000000000000000000000000001
 10000000000000000000000000000001
 10000000000000000000000000000001
 11111111111111111111111111111111"""
-mode='sandbox'
-solids=parse_solids_from_string(s)
+# mode='sandbox'
+mode='HeadHunters' #Quest, DarkWorld, Trials, LastManStanding, HeadHunters, TeamDeathmatch, PlayTag( not supported = Warlord)
+solids=None
+# speed=1
+speed=10
+# solids=parse_solids_from_string(s)
 nbAgents=2
 trainingPlayer=[
   dict(type='remote'), # ai
   dict(type='remote'), # IA to train
 ]
 agents=[
-  dict(archer='orange', ai='NoMoveAgent', X=300, Y=200),
-  dict(archer='purple', ai='TrainingAgent2', X=50, Y=200),
+  # dict(archer='orange', ai='NoMoveAgent', X=300, Y=100),
+  dict(archer='orange', ai='SimpleAgentLevel1', X=300, Y=100),
+  dict(archer='purple', ai='TrainingAgent3', X=50, Y=200), #always the last of the list, change self.player_index in TowerFallEnv.__init__
 ]
 #####################################################""
 def main():
-
 
   # nbAgents = 2
   # trainingPlayer=[
@@ -100,7 +104,8 @@ def main():
       noTreasure=True,
       noHazards=True,
       # speed=10,
-      speed=10,
+      # speed=1,
+      speed=speed,
       training=True,
       # training=False,
       # fps=60,

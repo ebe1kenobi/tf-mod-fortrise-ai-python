@@ -18,6 +18,7 @@ from agents import MovementAgent
 from agents import NoMoveAgent
 from agents import Jimmy
 from agents import TrainingAgent2
+from agents import TrainingAgent3
 
 
 _DEFAULT_STEAM_PATH_WINDOWS = 'C:/Program Files (x86)/Steam/steamapps/common/TowerFall'
@@ -97,6 +98,9 @@ class Towerfall:
       elif 'ai' in agent and agent['ai'] == 'TrainingAgent2':
         logging.info('TrainingAgent2')
         agents.append(TrainingAgent2(i, connections[i]))
+      elif 'ai' in agent and agent['ai'] == 'TrainingAgent3':
+        logging.info('TrainingAgent3')
+        agents.append(TrainingAgent3(i, connections[i]))
       else:
         logging.info('SimpleAgentLevel0')
         agents.append(SimpleAgentLevel0(i, connections[i]))

@@ -47,7 +47,42 @@
         //Logger.Info("player 3 dead");
         //AIPython.Rematch = true;
         AIPython.Update(self.CurrentLevel);
-        AIPython.agents[3].Move(); // send last state because Move() will not be called after this point when match end
+        // send a last Move to the training agent
+        Logger.Info("send last move " + (AIPython.agents.Length - 1));
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+        AIPython.agents[AIPython.agents.Length - 1].Move(); // send last state because Move() will not be called after this point when match end
+
       }
       orig(self);
     }

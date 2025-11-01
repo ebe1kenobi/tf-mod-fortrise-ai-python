@@ -1,3 +1,9 @@
+# https://chatgpt.com/c/69027548-7a3c-832a-b1ca-b550cc1ee177
+# utiliser cnn avec 4canaus, level/joueur/ennemy/fleche  -> voir pour al position des x y avec le level x y dans quel sens est le level
+# Normalisation des valeurs d’état => plus besoin car tout est en 10dans les 4 canaux
+# apprendre par partie plutot qu en continue  voir Exemple concret (à mettre dans TrainingAgent2.run()))
+# Action space plus précis, => Recommandation — “Action Set” raisonné (≈ 25 actions utiles)
+
 import logging
 import gymnasium as gym
 import numpy as np
@@ -6,10 +12,11 @@ import socket
 from stable_baselines3 import PPO
 import time
 
-class TowerFallEnv(gym.Env):
+class TowerFallEnvV1(gym.Env):
     def __init__(self, agent, game_state):
-        # logging.info('__init__***************************')
-        super(TowerFallEnv, self).__init__()
+        logging.info('__init__***************************')
+        logging.info(f'agent.id = {agent.id}')
+        super(TowerFallEnvV1, self).__init__()
 
         self.agent = agent
         self.game_state = game_state
@@ -23,12 +30,15 @@ class TowerFallEnv(gym.Env):
         self.first = True
         self.info = {}
         # self.player_index = 3
-        self.player_index = 1
-        self.enemy1_index = 0
-        # self.enemy2_index = 1
-        self.enemy2_index = 9
-        # self.enemy3_index = 2
-        self.enemy3_index = 9
+        self.player_index = agent.id  #always the last!!
+        self.enemy1_index = 0 # always min 2 agent
+        self.enemy2_index = 1 if agent.id > 1 else 9
+        self.enemy3_index = 2 if agent.id > 2 else 9
+
+        # # self.enemy2_index = 1
+        # self.enemy2_index = 9
+        # # self.enemy3_index = 2
+        # self.enemy3_index = 9
 
         self.total_step = 0
         self.total_game = 0
@@ -622,7 +632,8 @@ class TowerFallEnv(gym.Env):
         return reward
 
     def _check_done(self, state):
-        # logging.info('_check_done***************************')
+        logging.info('_check_done***************************')
+        print('print _check_done***************************')
         # """Vérifie si le joueur est mort."""
         # if state[0] == 0 and state[1] == 0:  # Exemple : si le joueur a disparu
         #     return True

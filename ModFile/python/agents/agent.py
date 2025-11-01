@@ -33,7 +33,7 @@ class Agent:
       # logging.info('towerfall.run : agent.act')
       self.act(game_state)
 
-  def act(self, game_state: Mapping[str, Any]):
+  def act(self, game_state: Mapping[str, Any], rematch=False):
     '''
     Handles a game message.
     '''
@@ -94,7 +94,7 @@ class Agent:
     if self.isDead():
       # You are required to reply with actions, or the agent will get disconnected.
       # logging.info('Agent.send_actions  player dead')
-      self.send_actions()
+      self.send_actions(rematch)
       return True
 
     return False
@@ -106,18 +106,20 @@ class Agent:
     # logging.info('agent.press')
     self.pressed.add(b)
 
-  def send_actions(self):
+  def send_actions(self, rematch=False):
     # logging.info(f'agent.send_actions {self.id} =' + str(dict(
     #   type = 'actions',
     #   actions = ''.join(self.pressed),
-    #   rematch = self.rematch,
+    #   # rematch = self.rematch,
+    #   rematch = rematch,
     #   id = self.state_update['id']
     # )))
     assert self.state_update
     self.connection.send_json(dict(
       type = 'actions',
       actions = ''.join(self.pressed),
-      rematch = self.rematch,
+      # rematch = self.rematch,
+      rematch = rematch,
       id = self.state_update['id']
     ))
     self.pressed.clear()

@@ -39,6 +39,15 @@ namespace TFModFortRiseAiPython
     //  orig(self);
 
     //}
+
+    //todo TEST for 
+    //System.NullReferenceException: Object reference not set to an instance of an object.
+    //at TowerFall.VersusStart.<IntroSequence>d__15.MoveNext()
+    //at Monocle.Coroutine.Update()
+    //at Monocle.Entity.Update()
+    //at TowerFall.HUD.Update()
+    //at Monocle.Layer.Update()
+    //at Monocle.Scene.Update()
     public static IEnumerator SessionIntroSequence_patch(On.TowerFall.VersusStart.orig_SessionIntroSequence orig, global::TowerFall.VersusStart self)
     {
       //TFGame.PlayerInputs[0].MenuConfirm = true;
@@ -46,6 +55,10 @@ namespace TFModFortRiseAiPython
       //dynData.Set("MenuConfirm", true);
       //dynData.Dispose();
       //orig(self);
+      //yield return orig(self);
+      //yield return orig(self);
+      //yield return orig(self);
+      //yield return orig(self);
       yield break;
     }
 
